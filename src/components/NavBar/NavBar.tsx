@@ -21,7 +21,7 @@ const NavBar: React.FC<NavBarProps> = ({ currentFilter, onFilterChange, onAddTas
   };
 
   return (
-    <nav className="flex flex-col px-1 gap-0.1 -mb-3">
+    <nav className="flex flex-col px-2 gap-0.1 -mb-3">
       {}
       {currentFilter !== 'habits' && (
         <div className="relative w-full -mb-2.2">
