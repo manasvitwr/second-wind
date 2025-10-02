@@ -1,0 +1,50 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600;700&display=swap');
+
+@layer base {
+  * {
+    @apply box-border;
+  }
+  
+  html, body, #root {
+    @apply h-screen w-screen overflow-x-auto;
+    font-family: 'Geist', sans-serif;
+    @apply bg-gradient-to-b from-neutral-800 to-black text-white;
+  }
+  
+  body {
+    @apply overscroll-none m-0 p-0;
+  }
+}
+
+@layer components {
+  .app-title {
+    @apply font-geist-mono font-bold text-3xl md:text-4xl bg-gradient-to-b from-white from-0% via-white/70 via-50% to-[rgba(255,255,255,0)] to-100% bg-clip-text text-transparent;
+  }
+  
+  .section-title {
+    @apply font-geist-mono font-medium bg-gradient-to-b from-white from-0% via-white/70 via-50% to-[rgba(255,255,255,0)] to-100% bg-clip-text text-transparent;
+  }
+
+  .input-placeholder {
+    @apply font-geist-mono font-normal text-neutral-400;
+  }
+  
+  .nav-text {
+    @apply font-geist-mono font-normal text-white;
+  }
+  
+  .task-text {
+    @apply font-geist font-normal text-white;
+  }
+  
+  .footer-text {
+    @apply font-geist font-semibold text-white;
+  }
+  
+  .task-completed {
+    @apply line-through text-neutral-500;
+  }
+}
