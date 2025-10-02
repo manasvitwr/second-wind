@@ -10,7 +10,7 @@ interface TaskCheckboxProps {
 const TaskCheckbox: React.FC<TaskCheckboxProps> = ({ checked, onChange, disabled }) => {
   return (
     <div
-      className={`w-5 h-5 border-2 rounded flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
+      className={`w-4 h-4 border-2 rounded flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
         disabled 
           ? 'cursor-not-allowed border-neutral-700' 
           : 'cursor-pointer hover:border-neutral-400'

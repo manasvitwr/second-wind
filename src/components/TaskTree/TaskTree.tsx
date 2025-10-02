@@ -50,10 +50,10 @@ const TaskTree: React.FC<TaskTreeProps> = ({
   }
 
   return (
-    <div className="flex-1 px-3 md:px-8 flex flex-col">
-      <div className="relative mb-1 -ml-2">
-        <h2 className="section-title text-2xl md:text-3xl pb-1 inline-flex items-center gap-1">
-          <span className="border-b border-neutral-400 pb-0.5">
+    <div className="flex-1 px-4 md:px-8 flex flex-col">
+      <div className="relative mb-2 -ml-2">
+        <h2 className="section-title text-xl md:text-2xl inline-flex items-center leading-tight">
+          <span className="underline decoration-white underline-offset-[6px] pb-0">
             Tasks
           </span>
           <svg 
