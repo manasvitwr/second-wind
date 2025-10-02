@@ -3,7 +3,7 @@ export function useConfetti() {
 		try {
 			const durationMs = 900;
 			const end = Date.now() + durationMs;
-			const colors = ['#a3e635', '#60a5fa', '#f472b6', '#f59e0b', '#38bdf8'];
+			const colors = ['#ffffffff', '#ffffffff', '#ffffffff', '#ffffffff', '#ffffffff'];
 			const count = 120;
 			const createParticle = () => {
 				const div = document.createElement('div');
