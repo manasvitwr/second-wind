@@ -205,7 +205,7 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
             </div>
           )}
           
-          {task.children.map((child, index) => (
+          {task.children.map((child) => (
             <div 
               key={child.id} 
               className="flex items-center gap-4 group cursor-pointer hover:bg-neutral-800/20 rounded px-1 transition-all duration-300 ease-out transform hover:translate-x-1"
