@@ -66,7 +66,6 @@
 - Edit tasks inline for quick adjustments without disrupting workflow
 - Reorder tasks to match your current priorities and energy levels
 - Use the clean interface to minimize distractions and maximize productivity
-
 ### Advanced Usage
 
 - Create main tasks for project outlines and subtasks for specific actions
