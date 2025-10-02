@@ -21,7 +21,7 @@ const NavBar: React.FC<NavBarProps> = ({ currentFilter, onFilterChange, onAddTas
   };
 
   return (
-    <nav className="flex flex-col gap-0.1 -mb-3">
+    <nav className="flex flex-col px-1 gap-0.1 -mb-3">
       {}
       {currentFilter !== 'habits' && (
         <div className="relative w-full -mb-2.2">
@@ -31,15 +31,15 @@ const NavBar: React.FC<NavBarProps> = ({ currentFilter, onFilterChange, onAddTas
             placeholder="What needs to be done?"
             onChange={e => setNewTask(e.target.value)}
             onKeyPress={handleTaskAdd}
-            className="input-placeholder bg-transparent border-b-2 border-neutral-600 text-white font-geist-mono text-2xl md:text-4xl py-3line w-full tracking-normal transition-all duration-300 focus:border-neutral-400"
+            className="input-placeholder bg-transparent border-b-2 border-neutral-600 text-neutral-400 font-geist-mono font-normal text-2xl md:text-3xl py-3line w-full tracking-normal transition-all duration-300 focus:text-neutral-200 focus:outline-none focus:border-neutral-500 focus:placeholder-neutral-500"
           />
         </div>
       )}
       
-      {/* Filter buttons with horizontal scroll */}
-      <div className="flex items-center gap-0.3 md:gap-1 pb-4 overflow-x-auto scrollbar-hide whitespace-nowrap"> 
+
+      <div className="flex items-center gap-1 md:gap-1 pb-4 whitespace-nowrap"> 
         <button
-          className={`nav-text bg-none border-none font-geist-mono px-0.5 py-0.5 transition-colors duration-200 tracking-tight text-lg md:text-base flex-shrink-0 ${
+          className={`nav-text bg-none border-none font-geist-mono font-normal px-0.5 py-0.5 transition-colors duration-200 tracking-tight text-base md:text-sm flex-shrink-0 ${
             currentFilter === 'all' 
               ? 'text-white underline underline-offset-4' 
               : 'text-neutral-500 hover:text-white'
@@ -48,10 +48,10 @@ const NavBar: React.FC<NavBarProps> = ({ currentFilter, onFilterChange, onAddTas
         >
           View All
         </button>
-        <span className="text-neutral-700 text-sm md:text-base font-geist-mono mx-1 flex-shrink-0">/</span> 
+        <span className="text-neutral-700 text-xs md:text-sm font-geist-mono font-normal mx-1 flex-shrink-0">/</span> 
         <button
-          className={`nav-text bg-none border-none font-geist-mono px-0.5 py-0.5 transition-colors duration-200 tracking-tight
-             text-lg md:text-base flex-shrink-0 ${
+          className={`nav-text bg-none border-none font-geist-mono font-normal px-0.5 py-0.5 transition-colors duration-200 tracking-tight
+             text-base md:text-sm flex-shrink-0 ${
             currentFilter === 'active' 
               ? 'text-white underline underline-offset-4' 
               : 'text-neutral-500 hover:text-white'
@@ -60,9 +60,9 @@ const NavBar: React.FC<NavBarProps> = ({ currentFilter, onFilterChange, onAddTas
         >
           Active
         </button>
-        <span className="text-neutral-700 text-sm md:text-base font-geist-mono mx-1 flex-shrink-0">/</span> 
+        <span className="text-neutral-700 text-xs md:text-sm font-geist-mono font-normal mx-1 flex-shrink-0">/</span> 
         <button
-          className={`nav-text bg-none border-none font-geist-mono px-0.5 py-0.5 transition-colors duration-200 tracking-tight text-lg md:text-base flex-shrink-0 ${
+          className={`nav-text bg-none border-none font-geist-mono font-normal px-0.5 py-0.5 transition-colors duration-200 tracking-tight text-base md:text-sm flex-shrink-0 ${
             currentFilter === 'completed' 
               ? 'text-white underline underline-offset-4' 
               : 'text-neutral-500 hover:text-white'
@@ -71,9 +71,9 @@ const NavBar: React.FC<NavBarProps> = ({ currentFilter, onFilterChange, onAddTas
         >
           Completed
         </button>
-        <span className="text-neutral-700 text-sm md:text-base font-geist-mono mx-1 flex-shrink-0">/</span> 
+        <span className="text-neutral-700 text-xs md:text-sm font-geist-mono font-normal mx-1 flex-shrink-0">/</span> 
         <button
-          className={`nav-text bg-none border-none font-geist-mono px-0.5 py-0.5 transition-colors duration-200 tracking-tight text-lg md:text-base flex-shrink-0 ${
+          className={`nav-text bg-none border-none font-geist-mono font-normal px-0.5 py-0.5 transition-colors duration-200 tracking-tight text-base md:text-sm flex-shrink-0 ${
             currentFilter === 'habits' 
               ? 'text-white underline underline-offset-4' 
               : 'text-neutral-500 hover:text-white'
