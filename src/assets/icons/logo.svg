@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- black rounded square background -->
+  <rect x="0" y="0" width="1024" height="1024" rx="180" ry="180" fill="#000"/>
+
+
+  <path d="M420 250 
+           L500 250 
+           Q530 250 550 270 
+           L700 774 
+           Q720 794 700 814 
+           L620 814 
+           Q590 814 570 794 
+           L420 290 
+           Q400 270 420 250 Z"
+        fill="#ffffff" stroke="#fff" stroke-width="30"
+        transform="scale(-1,1) translate(-1024,0)"/>
+</svg>

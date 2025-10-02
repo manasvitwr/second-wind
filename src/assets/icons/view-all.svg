@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024"
+     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+  <defs>
+    <!-- metallic stroke gradient for the outer rounded frame -->
+    <linearGradient id="metalStroke" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#f6f6f7"/>
+      <stop offset="0.25" stop-color="#cfcfd1"/>
+      <stop offset="0.5" stop-color="#b6b7b9"/>
+      <stop offset="0.75" stop-color="#d9d9da"/>
+      <stop offset="1" stop-color="#f3f4f4"/>
+    </linearGradient>
+
+    <!-- main glossy fill for bullets and bars -->
+    <linearGradient id="metalFill" x1="0" x2="1">
+      <stop offset="0" stop-color="#f7f8f9"/>
+      <stop offset="0.45" stop-color="#e6e7e8"/>
+      <stop offset="0.9" stop-color="#bdbec0"/>
+    </linearGradient>
+
+    <!-- subtle top highlight for bars -->
+    <linearGradient id="gloss" x1="0" x2="1">
+      <stop offset="0" stop-color="rgba(255,255,255,0.85)"/>
+      <stop offset="0.4" stop-color="rgba(255,255,255,0.35)"/>
+      <stop offset="1" stop-color="rgba(255,255,255,0)"/>
+    </linearGradient>
+
+    <!-- diagonal glossy stripe used on bars -->
+    <linearGradient id="diagStripe" gradientTransform="rotate(25)">
+      <stop offset="0" stop-color="rgba(255,255,255,0.65)"/>
+      <stop offset="0.5" stop-color="rgba(255,255,255,0.12)"/>
+      <stop offset="1" stop-color="rgba(255,255,255,0)"/>
+    </linearGradient>
+
+    <!-- subtle dark shadow under each element -->
+    <filter id="softDrop" x="-50%" y="-50%" width="200%" height="200%">
+      <feOffset in="SourceAlpha" dx="0" dy="10" result="off"/>
+      <feGaussianBlur in="off" stdDeviation="14" result="blur"/>
+      <feColorMatrix in="blur" type="matrix"
+         values="0 0 0 0 0
+                 0 0 0 0 0
+                 0 0 0 0 0
+                 0 0 0 0.45" result="shadow"/>
+      <feBlend in="SourceGraphic" in2="shadow" mode="normal"/>
+    </filter>
+
+    <!-- small crisp drop for bullets offset left -->
+    <filter id="bulletShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feOffset in="SourceAlpha" dx="6" dy="16" result="o"/>
+      <feGaussianBlur in="o" stdDeviation="9" result="b"/>
+      <feColorMatrix in="b" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.45" />
+      <feBlend in="SourceGraphic" mode="normal"/>
+    </filter>
+
+    <!-- inner soft bevel to make bars look raised -->
+    <filter id="bevel" x="-40%" y="-40%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur"/>
+      <feOffset in="blur" dx="0" dy="2" result="offsetBlur"/>
+      <feComposite in="SourceGraphic" in2="offsetBlur" operator="over" result="comp"/>
+      <feMerge>
+        <feMergeNode in="comp"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- outer rounded metal frame -->
+  <rect x="44" y="44" width="936" height="936" rx="120" ry="120"
+        fill="none"
+        stroke="url(#metalStroke)"
+        stroke-width="48"
+        stroke-linejoin="round"
+        filter="url(#bevel)"/>
+
+
+  <g transform="translate(170,350)">
+    <!-- first row -->
+    <g transform="translate(0,0)">
+      <g filter="url(#bulletShadow)">
+        <circle cx="50" cy="40" r="36" fill="url(#metalFill)"/>
+        <ellipse cx="44" cy="34" rx="16" ry="10" fill="rgba(255,255,255,0.65)"/>
+      </g>
+      <g transform="translate(120,10)" filter="url(#softDrop)">
+        <rect x="0" y="0" rx="28" ry="28" width="560" height="56" fill="url(#metalFill)"/>
+        <rect x="0" y="0" rx="28" ry="28" width="560" height="56" fill="url(#diagStripe)" style="mix-blend-mode:screen;"/>
+        <rect x="0" y="0" rx="28" ry="28" width="560" height="20" fill="url(#gloss)"/>
+      </g>
+    </g>
+
+    <!-- second row -->
+    <g transform="translate(0,130)">
+      <g filter="url(#bulletShadow)">
+        <circle cx="50" cy="40" r="36" fill="url(#metalFill)"/>
+        <ellipse cx="44" cy="34" rx="16" ry="10" fill="rgba(255,255,255,0.65)"/>
+      </g>
+      <g transform="translate(120,10)" filter="url(#softDrop)">
+        <rect x="0" y="0" rx="28" ry="28" width="560" height="56" fill="url(#metalFill)"/>
+        <rect x="0" y="0" rx="28" ry="28" width="560" height="56" fill="url(#diagStripe)" style="mix-blend-mode:screen;"/>
+        <rect x="0" y="0" rx="28" ry="28" width="560" height="20" fill="url(#gloss)"/>
+      </g>
+    </g>
+
+    <!-- third row -->
+    <g transform="translate(0,260)">
+      <g filter="url(#bulletShadow)">
+        <circle cx="50" cy="40" r="36" fill="url(#metalFill)"/>
+        <ellipse cx="44" cy="34" rx="16" ry="10" fill="rgba(255,255,255,0.65)"/>
+      </g>
+      <g transform="translate(120,10)" filter="url(#softDrop)">
+        <rect x="0" y="0" rx="28" ry="28" width="560" height="56" fill="url(#metalFill)"/>
+        <rect x="0" y="0" rx="28" ry="28" width="560" height="56" fill="url(#diagStripe)" style="mix-blend-mode:screen;"/>
+        <rect x="0" y="0" rx="28" ry="28" width="560" height="20" fill="url(#gloss)"/>
+      </g>
+    </g>
+  </g>
+</svg>
