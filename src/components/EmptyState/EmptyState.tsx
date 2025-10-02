@@ -1,4 +1,7 @@
 import React from 'react';
+import ViewAllIcon from '../../assets/icons/view-all.svg';
+import ActiveIcon from '../../assets/icons/active.svg';
+import CompletedIcon from '../../assets/icons/completed.svg';
 
 interface EmptyStateProps {
   filter: 'all' | 'active' | 'completed' | 'habits';
@@ -25,9 +28,35 @@ const EmptyState: React.FC<EmptyStateProps> = ({ filter }) => {
     return null;
   };
 
+  const getIcon = () => {
+    switch (filter) {
+      case 'all':
+        return ViewAllIcon;
+      case 'active':
+        return ActiveIcon;
+      case 'completed':
+        return CompletedIcon;
+      case 'habits':
+        return null;
+      default:
+        return null;
+    }
+  };
+
+  const Icon = getIcon();
+
   return (
-    <div className="flex flex-col items-center justify-center py-12 text-center">
-      <p className="task-text text-lg mb-2">
+    <div className="flex flex-col items-center justify-center py-[200px] text-center">
+      {Icon && (
+        <div className="mb-3">
+          <img 
+            src={Icon} 
+            alt="" 
+            className="w-20 h-20 opacity-70"
+          />
+        </div>
+      )}
+      <p className="task-text text-lg mb-1">
         {getMessage()}
       </p>
       {getSubMessage() && (
