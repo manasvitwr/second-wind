@@ -22,10 +22,14 @@ const EmptyState: React.FC<EmptyStateProps> = ({ filter }) => {
   };
 
   const getSubMessage = () => {
-    if (filter === 'all') {
-      return 'Add your first task using the input above';
+    switch (filter) {
+      case 'all':
+        return 'Add your first task using the input above';
+      case 'habits':
+        return ' + Add New Habit to track daily routines and build streaks';
+      default:
+        return null;
     }
-    return null;
   };
 
   const getIcon = () => {
@@ -60,7 +64,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({ filter }) => {
         {getMessage()}
       </p>
       {getSubMessage() && (
-        <p className="text-neutral-600 font-geist text-sm">
+        <p className="text-neutral-400 font-geist text-sm max-w-xs leading-relaxed">
           {getSubMessage()}
         </p>
       )}
