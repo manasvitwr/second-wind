@@ -21,11 +21,11 @@
 
 @layer components {
   .app-title {
-    @apply font-geist-mono font-bold text-3xl md:text-4xl bg-gradient-to-b from-white from-0% via-white/70 via-50% to-[rgba(255,255,255,0)] to-100% bg-clip-text text-transparent;
+    @apply font-geist-mono font-bold text-3xl md:text-4xl bg-gradient-to-b from-white from-0% via-white/70 via-50% to-[rgba(255,255,255,0.2)] to-100% bg-clip-text text-transparent;
   }
   
   .section-title {
-    @apply font-geist-mono font-medium bg-gradient-to-b from-white from-0% via-white/70 via-50% to-[rgba(255,255,255,0)] to-100% bg-clip-text text-transparent;
+    @apply font-geist-mono font-normal bg-gradient-to-b from-white from-30% via-gray-200 via-70% to-gray-300 to-100% bg-clip-text text-transparent tracking-tight;
   }
 
   .input-placeholder {
