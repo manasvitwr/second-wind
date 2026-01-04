@@ -22,7 +22,7 @@ const NavBar: React.FC<NavBarProps> = ({ currentFilter, onFilterChange, onAddTas
 
   return (
     <nav className="flex flex-col px-2 gap-0.1 -mb-3">
-      {}
+      { }
       {currentFilter !== 'habits' && (
         <div className="relative w-full -mb-2.2">
           <input
@@ -35,50 +35,46 @@ const NavBar: React.FC<NavBarProps> = ({ currentFilter, onFilterChange, onAddTas
           />
         </div>
       )}
-      
 
-      <div className="flex items-center gap-1 md:gap-1 pb-4 whitespace-nowrap"> 
+
+      <div className="flex items-center gap-1 md:gap-1 pb-4 whitespace-nowrap">
         <button
-          className={`nav-text bg-none border-none font-geist-mono font-normal px-0.5 py-0.5 transition-colors duration-200 tracking-tight text-base md:text-sm flex-shrink-0 ${
-            currentFilter === 'all' 
-              ? 'text-white underline underline-offset-4' 
+          className={`nav-text bg-none border-none font-geist-mono font-normal px-0.5 py-0.5 transition-colors duration-200 tracking-tight text-sm md:text-lg flex-shrink-0 ${currentFilter === 'all'
+              ? 'text-white underline underline-offset-4'
               : 'text-neutral-500 hover:text-white'
-          }`}
-          onClick={() => { try { navAudio.currentTime = 0; navAudio.play(); } catch {} onFilterChange('all'); }}
+            }`}
+          onClick={() => { try { navAudio.currentTime = 0; navAudio.play(); } catch { } onFilterChange('all'); }}
         >
           View All
         </button>
-        <span className="text-neutral-700 text-xs md:text-sm font-geist-mono font-normal mx-1 flex-shrink-0">/</span> 
+        <span className="text-neutral-700 text-xs md:text-sm font-geist-mono font-normal mx-1 flex-shrink-0">/</span>
         <button
           className={`nav-text bg-none border-none font-geist-mono font-normal px-0.5 py-0.5 transition-colors duration-200 tracking-tight
-             text-base md:text-sm flex-shrink-0 ${
-            currentFilter === 'active' 
-              ? 'text-white underline underline-offset-4' 
+             text-sm md:text-lg flex-shrink-0 ${currentFilter === 'active'
+              ? 'text-white underline underline-offset-4'
               : 'text-neutral-500 hover:text-white'
-          }`}
-          onClick={() => { try { navAudio.currentTime = 0; navAudio.play(); } catch {} onFilterChange('active'); }}
+            }`}
+          onClick={() => { try { navAudio.currentTime = 0; navAudio.play(); } catch { } onFilterChange('active'); }}
         >
           Active
         </button>
-        <span className="text-neutral-700 text-xs md:text-sm font-geist-mono font-normal mx-1 flex-shrink-0">/</span> 
+        <span className="text-neutral-700 text-xs md:text-sm font-geist-mono font-normal mx-1 flex-shrink-0">/</span>
         <button
-          className={`nav-text bg-none border-none font-geist-mono font-normal px-0.5 py-0.5 transition-colors duration-200 tracking-tight text-base md:text-sm flex-shrink-0 ${
-            currentFilter === 'completed' 
-              ? 'text-white underline underline-offset-4' 
+          className={`nav-text bg-none border-none font-geist-mono font-normal px-0.5 py-0.5 transition-colors duration-200 tracking-tight text-sm md:text-lg flex-shrink-0 ${currentFilter === 'completed'
+              ? 'text-white underline underline-offset-4'
               : 'text-neutral-500 hover:text-white'
-          }`}
-          onClick={() => { try { navAudio.currentTime = 0; navAudio.play(); } catch {} onFilterChange('completed'); }}
+            }`}
+          onClick={() => { try { navAudio.currentTime = 0; navAudio.play(); } catch { } onFilterChange('completed'); }}
         >
           Completed
         </button>
-        <span className="text-neutral-700 text-xs md:text-sm font-geist-mono font-normal mx-1 flex-shrink-0">/</span> 
+        <span className="text-neutral-700 text-xs md:text-sm font-geist-mono font-normal mx-1 flex-shrink-0">/</span>
         <button
-          className={`nav-text bg-none border-none font-geist-mono font-normal px-0.5 py-0.5 transition-colors duration-200 tracking-tight text-base md:text-sm flex-shrink-0 ${
-            currentFilter === 'habits' 
-              ? 'text-white underline underline-offset-4' 
+          className={`nav-text bg-none border-none font-geist-mono font-normal px-0.5 py-0.5 transition-colors duration-200 tracking-tight text-sm md:text-lg flex-shrink-0 ${currentFilter === 'habits'
+              ? 'text-white underline underline-offset-4'
               : 'text-neutral-500 hover:text-white'
-          }`}
-          onClick={() => { try { navAudio.currentTime = 0; navAudio.play(); } catch {} onFilterChange('habits'); }}
+            }`}
+          onClick={() => { try { navAudio.currentTime = 0; navAudio.play(); } catch { } onFilterChange('habits'); }}
         >
           Habits
         </button>
