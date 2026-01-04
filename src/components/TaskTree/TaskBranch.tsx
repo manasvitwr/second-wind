@@ -48,12 +48,26 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
     if (task.isHabit) {
       onShowHabitModal();
       setIsEditing(false);
+      setIsEditMode(false);
       return;
     }
-    if (editTitle.trim()) {
-      onEditTask(task.id, editTitle.trim());
-      setIsEditing(false);
+
+    const trimmedTitle = editTitle.trim();
+    if (trimmedTitle) {
+      onEditTask(task.id, trimmedTitle);
+    } else {
+      // Revert if empty
+      setEditTitle(task.title);
     }
+    // Always exit edit mode and sync isEditMode
+    setIsEditing(false);
+    setIsEditMode(false);
+  };
+
+  const handleBlur = () => {
+    setTimeout(() => {
+      handleEdit();
+    }, 100);
   };
 
   const handleSubTaskEdit = (subTaskId: string) => {
@@ -83,22 +97,24 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
   };
 
   const toggleEditMode = () => {
-    const newEditMode = !isEditMode;
-    setIsEditMode(newEditMode);
+    if (task.isHabit) {
+      onShowHabitModal();
+      return;
+    }
 
-    if (newEditMode) {
-      if (task.isHabit) {
-        onShowHabitModal();
-        setIsEditMode(false);
-        return;
-      }
-      setIsEditing(true);
-      setEditTitle(task.title);
-    } else {
+    if (isEditing || isEditMode) {
+      // Exit full edit mode
       setIsEditing(false);
+      setIsEditMode(false);
+      setEditTitle('');
       setEditingSubTaskId(null);
       setEditSubTaskTitle('');
       cancelAddSubTask();
+    } else {
+      // Enter full edit mode
+      setIsEditing(true);
+      setIsEditMode(true);
+      setEditTitle(task.title);
     }
   };
 
@@ -148,22 +164,31 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
             value={editTitle}
             onChange={(e) => setEditTitle(e.target.value)}
             className="flex-1 bg-transparent border-b border-neutral-500 rounded-none px-2 py-1 text-white text-base md:text-lg outline-none transition-all duration-300 ease-out focus:border-neutral-300 font-geist-mono"
-            onKeyPress={(e) => e.key === 'Enter' && handleEdit()}
-            onBlur={handleEdit}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                setIsEditing(false);
+                setEditTitle(task.title);
+              } else if (e.key === 'Enter') {
+                handleEdit();
+              }
+            }}
+            onBlur={handleBlur}
             autoFocus
+            aria-pressed={isEditing}
           />
         ) : (
           <div className="flex-1 flex items-center gap-4">
             <span
-              className={`task-text text-base md:text-lg font-geist-mono font-normal transition-all duration-300 ease-out ${task.completed ? 'task-completed opacity-70 scale-98' : 'opacity-100 scale-100'
+              className={`task-text text-base md:text-lg font-geist-mono font-normal transition-all duration-300 ease-out cursor-pointer select-none ${task.completed ? 'task-completed opacity-70 scale-98' : 'opacity-100 scale-100'
                 }`}
               onClick={() => {
-                if (isMobile && !isEditMode) {
-                  setIsEditMode(true);
+                if (!task.isHabit && !isEditing) {
                   setIsEditing(true);
+                  setIsEditMode(true);
                   setEditTitle(task.title);
                 }
               }}
+              aria-label="Edit task"
             >
               {task.title}
             </span>
@@ -184,7 +209,7 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
           </div>
         )}
 
-        <div className="flex gap-2 opacity-70 transition-all duration-300 ease-out">
+        <div className="flex gap-2 opacity-70 transition-all duration-300 ease-out min-w-[60px] shrink-0 justify-end">
           {shouldShowEditButton && (
             <button
               className="p-1 text-neutral-500 hover:text-white transition-all duration-250 ease-out transform hover:scale-110"
@@ -228,8 +253,8 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
 
       {isExpanded && task.children && task.children.length > 0 && (
         <div className="flex flex-col gap-1 ml-8 mb-0 mt-1 relative transition-all duration-300 ease-out">
-          {/* Vertical Connector Line - Only if not last task group */}
-          {!isLastTask && (
+          {/* Vertical Connector Line - Only if not last task group and not editing */}
+          {!isLastTask && !isEditing && !isEditMode && (
             <div
               className="absolute left-[-1.75rem] w-[3px] bg-white rounded-full z-0"
               style={{
