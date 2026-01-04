@@ -242,5 +242,18 @@ export function useTasks() {
     toggleTask,
     editTask,
     deleteTask,
+    restoreTask: (task: Task, parentId?: string) => {
+      setTasks(prev => {
+        if (!parentId) {
+          return [...prev, task];
+        }
+        
+        return prev.map(t => 
+          t.id === parentId 
+            ? { ...t, children: [...(t.children || []), task] }
+            : t
+        );
+      });
+    },
   };
 }
