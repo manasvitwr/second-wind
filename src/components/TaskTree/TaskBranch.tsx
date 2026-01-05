@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Task } from '../../lib/types';
 import TaskCheckbox from './TaskCheckbox';
 import { Edit, Trash2, Plus, Minus } from 'lucide-react';
@@ -145,13 +145,32 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
   const shouldShowMinitasksIcon = !isEditing && editingSubTaskId === null;
   const shouldShowEditButton = isMobile ? isEditMode : isHovering;
 
+  // FIX #3: Click outside to close subtask modal
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (isAddingSubTask &&
+        !target.closest('.subtask-modal') &&
+        !target.closest('.subtask-input') &&
+        !target.closest('.add-subtask-btn')) {
+        setIsAddingSubTask(false);
+        setNewSubTaskTitle('');
+      }
+    };
+
+    if (isAddingSubTask) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isAddingSubTask]);
+
   return (
     <div
-      className="flex flex-col py-1 px-3 bg-transparent transition-all duration-300 ease-out"
+      className="flex flex-col py-1 px-0 md:px-3 bg-transparent transition-all duration-300 ease-out"
       onMouseEnter={() => !isMobile && setIsHovering(true)}
       onMouseLeave={() => !isMobile && setIsHovering(false)}
     >
-      <div className="flex items-center gap-4 relative -ml-1 transition-all duration-250 ease-out">
+      <div className="flex items-center gap-2 md:gap-4 relative ml-0 md:-ml-1 transition-all duration-250 ease-out">
         <TaskCheckbox
           checked={task.completed}
           onChange={handleTaskCompletion}
@@ -209,7 +228,8 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
           </div>
         )}
 
-        <div className="flex gap-2 opacity-70 transition-all duration-300 ease-out min-w-[60px] shrink-0 justify-end">
+        {/* FIX #3: Reduced icon opacity to 0.6, hover to 1.0 */}
+        <div className="flex gap-2 opacity-60 hover:opacity-100 transition-all duration-300 ease-out min-w-[60px] shrink-0 justify-end">
           {shouldShowEditButton && (
             <button
               className="p-1 text-neutral-500 hover:text-white transition-all duration-250 ease-out transform hover:scale-110"
@@ -325,13 +345,13 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
       )}
 
       {isAddingSubTask && (
-        <div className="ml-5 md:ml-5 transition-all duration-300 ease-out">
+        <div className="ml-5 md:ml-5 transition-all duration-300 ease-out subtask-modal">
           <input
             type="text"
             value={newSubTaskTitle}
             onChange={(e) => setNewSubTaskTitle(e.target.value)}
             placeholder="Enter subtask..."
-            className="w-full bg-transparent border-b border-neutral-500 rounded-none px-2 py-2 text-white text-base md:text-lg outline-none transition-all duration-300 ease-out focus:border-neutral-300 font-geist-mono"
+            className="subtask-input w-full bg-transparent border-b border-neutral-500 rounded-none px-2 py-2 text-white text-base md:text-lg outline-none transition-all duration-300 ease-out focus:border-neutral-300 font-geist-mono"
             onKeyPress={(e) => e.key === 'Enter' && handleAddSubTask()}
             autoFocus
           />
@@ -342,9 +362,10 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
             >
               Add
             </button>
+            {/* FIX #4: Red Cancel button */}
             <button
               onClick={cancelAddSubTask}
-              className="px-4 py-2 text-neutral-400 text-sm rounded-lg transition-all duration-300 ease-out backdrop-blur-sm bg-neutral-800/30 border border-neutral-700/50 hover:bg-neutral-700/40 hover:text-neutral-300 font-geist-mono"
+              className="px-4 py-2 text-white text-sm rounded-lg transition-all duration-300 ease-out backdrop-blur-sm bg-red-600/80 border border-red-400/50 hover:bg-red-500/90 hover:border-red-300/60 font-geist-mono"
             >
               Cancel
             </button>
