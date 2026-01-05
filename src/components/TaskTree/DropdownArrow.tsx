@@ -6,10 +6,10 @@ interface DropdownArrowProps {
   className?: string;
 }
 
-const DropdownArrow: React.FC<DropdownArrowProps> = ({ 
-  isExpanded, 
-  onToggle, 
-  className = "" 
+const DropdownArrow: React.FC<DropdownArrowProps> = ({
+  isExpanded,
+  onToggle,
+  className = ""
 }) => {
   const [isHovering, setIsHovering] = useState(false);
 
@@ -31,9 +31,8 @@ const DropdownArrow: React.FC<DropdownArrowProps> = ({
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className={`transition-transform duration-300 ease-out ${
-          isExpanded ? 'rotate-90' : 'rotate-0'
-        } ${isHovering ? 'text-white' : 'text-neutral-400'}`}
+        className={`transition-transform duration-300 ease-out ${isExpanded ? 'rotate-90' : 'rotate-0'
+          } ${isHovering ? 'text-white' : 'text-neutral-400'}`}
       >
         <polyline points="9 18 15 12 9 6" />
       </svg>
