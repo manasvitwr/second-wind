@@ -7,13 +7,15 @@
   * {
     @apply box-border;
   }
-  
-  html, body, #root {
+
+  html,
+  body,
+  #root {
     @apply h-screen w-screen overflow-x-auto;
     font-family: 'Geist', sans-serif;
     @apply bg-gradient-to-b from-neutral-800 to-black text-white;
   }
-  
+
   body {
     @apply overscroll-none m-0 p-0;
   }
@@ -21,9 +23,9 @@
 
 @layer components {
   .app-title {
-    @apply font-geist-mono font-bold text-3xl md:text-4xl bg-gradient-to-b from-white from-0% via-white/70 via-50% to-[rgba(255,255,255,0.2)] to-100% bg-clip-text text-transparent;
+    @apply font-geist-mono font-bold text-3xl md:text-4xl bg-gradient-to-b from-white from-0% via-white/70 via-50% to-white/20 to-100% bg-clip-text text-transparent;
   }
-  
+
   .section-title {
     @apply font-geist-mono font-normal bg-gradient-to-b from-white from-30% via-gray-200 via-70% to-gray-300 to-100% bg-clip-text text-transparent tracking-tight;
   }
@@ -31,20 +33,31 @@
   .input-placeholder {
     @apply font-geist-mono font-normal text-neutral-400;
   }
-  
+
   .nav-text {
     @apply font-geist-mono font-normal text-white;
   }
-  
+
   .task-text {
     @apply font-geist font-normal text-white;
   }
-  
+
   .footer-text {
     @apply font-geist font-semibold text-white;
   }
-  
+
   .task-completed {
     @apply line-through text-neutral-500;
+  }
+}
+
+/* FIX #2: Mobile Layout Rebalancing (max-width: 768px) */
+@media (max-width: 768px) {
+
+  /* Full-width navigation bar */
+  .nav-bar {
+    width: 100vw;
+    left: 0;
+    padding: 0 16px;
   }
 }
