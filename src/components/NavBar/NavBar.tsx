@@ -40,8 +40,8 @@ const NavBar: React.FC<NavBarProps> = ({ currentFilter, onFilterChange, onAddTas
       <div className="flex items-center gap-1 md:gap-1 pb-4 whitespace-nowrap">
         <button
           className={`nav-text bg-none border-none font-geist-mono font-normal px-0.5 py-0.5 transition-colors duration-200 tracking-tight text-sm md:text-lg flex-shrink-0 ${currentFilter === 'all'
-              ? 'text-white underline underline-offset-4'
-              : 'text-neutral-500 hover:text-white'
+            ? 'text-white underline underline-offset-4'
+            : 'text-neutral-500 hover:text-white'
             }`}
           onClick={() => { try { navAudio.currentTime = 0; navAudio.play(); } catch { } onFilterChange('all'); }}
         >
@@ -61,8 +61,8 @@ const NavBar: React.FC<NavBarProps> = ({ currentFilter, onFilterChange, onAddTas
         <span className="text-neutral-700 text-xs md:text-sm font-geist-mono font-normal mx-1 flex-shrink-0">/</span>
         <button
           className={`nav-text bg-none border-none font-geist-mono font-normal px-0.5 py-0.5 transition-colors duration-200 tracking-tight text-sm md:text-lg flex-shrink-0 ${currentFilter === 'completed'
-              ? 'text-white underline underline-offset-4'
-              : 'text-neutral-500 hover:text-white'
+            ? 'text-white underline underline-offset-4'
+            : 'text-neutral-500 hover:text-white'
             }`}
           onClick={() => { try { navAudio.currentTime = 0; navAudio.play(); } catch { } onFilterChange('completed'); }}
         >
@@ -71,8 +71,8 @@ const NavBar: React.FC<NavBarProps> = ({ currentFilter, onFilterChange, onAddTas
         <span className="text-neutral-700 text-xs md:text-sm font-geist-mono font-normal mx-1 flex-shrink-0">/</span>
         <button
           className={`nav-text bg-none border-none font-geist-mono font-normal px-0.5 py-0.5 transition-colors duration-200 tracking-tight text-sm md:text-lg flex-shrink-0 ${currentFilter === 'habits'
-              ? 'text-white underline underline-offset-4'
-              : 'text-neutral-500 hover:text-white'
+            ? 'text-white underline underline-offset-4'
+            : 'text-neutral-500 hover:text-white'
             }`}
           onClick={() => { try { navAudio.currentTime = 0; navAudio.play(); } catch { } onFilterChange('habits'); }}
         >
