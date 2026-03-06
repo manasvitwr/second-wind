@@ -38,12 +38,19 @@ const TaskTree: React.FC<TaskTreeProps> = ({
     }
   });
 
+  const getLatestTimestamp = (task: Task): number => {
+    const own = new Date(task.createdAt).getTime();
+    if (!task.children || task.children.length === 0) return own;
+    const childMax = Math.max(...task.children.map(c => new Date(c.createdAt).getTime()));
+    return Math.max(own, childMax);
+  };
+
   const sortedTasks = filteredTasks.sort((a, b) => {
     if (a.completed !== b.completed) {
       return a.completed ? 1 : -1;
     }
-    // Ascending order: oldest tasks appear first
-    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    // Most recently created/modified task (or its subtasks) appears first
+    return getLatestTimestamp(b) - getLatestTimestamp(a);
   });
 
   if (sortedTasks.length === 0) {
