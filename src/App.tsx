@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import './styles/global.css';
 import NavBar from './components/NavBar/NavBar';
 import TaskTree from './components/TaskTree/TaskTree';
@@ -113,6 +114,8 @@ const App: React.FC = () => {
         onUndo={handleUndo}
         onClose={() => setToastState(prev => ({ ...prev, isVisible: false }))}
       />
+
+      <Analytics />
     </div>
   );
 };
