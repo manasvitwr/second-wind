@@ -13,12 +13,22 @@ export function useHabits() {
   }, []);
 
   useEffect(() => {
+    const handleHabitsUpdated = () => {
+      setHabits(localStorageService.getHabits());
+    };
+
+    window.addEventListener('habits-updated', handleHabitsUpdated);
+    return () => window.removeEventListener('habits-updated', handleHabitsUpdated);
+  }, []);
+
+  useEffect(() => {
     if (!isInitialized) {
       return;
     }
     
     localStorageService.saveHabits(habits);
-    window.dispatchEvent(new CustomEvent('habits-updated'));
+    // Only dispatch if habits actually changed from this hook's perspective
+    // and not as a result of habits-updated event
   }, [habits, isInitialized]);
 
   const addHabit = (title: string) => {
@@ -31,7 +41,7 @@ export function useHabits() {
     };
     setHabits(prev => [...prev, newHabit]);
     
-    const today = new Date().toISOString().split('T')[0];
+    const today = localStorageService.getTodayDateString();
     const habitTask = {
       id: `habit-${newHabit.id}-${today}`,
       title: newHabit.title,
@@ -57,25 +67,11 @@ export function useHabits() {
   };
 
   const toggleHabit = (id: string) => {
-    const today = new Date().toISOString().split('T')[0];
-    setHabits(prev => 
-      prev.map(habit => {
-        if (habit.id !== id) return habit;
-        const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-        const prevStreak = typeof habit.streak === 'number' ? habit.streak : 0;
-        let newStreak = prevStreak;
-        if (habit.lastCompletedDate === today) {
-          newStreak = prevStreak > 0 ? prevStreak - 1 : 0;
-          return { ...habit, lastCompletedDate: undefined, streak: newStreak };
-        }
-        if (habit.lastCompletedDate === yesterday) {
-          newStreak = prevStreak + 1;
-        } else {
-          newStreak = 1;
-        }
-        return { ...habit, lastCompletedDate: today, streak: newStreak };
-      })
-    );
+    const habit = habits.find(h => h.id === id);
+    if (!habit) return;
+    const today = localStorageService.getTodayDateString();
+    const isCurrentlyCompleted = habit.lastCompletedDate === today;
+    localStorageService.toggleHabitCompletion(id, !isCurrentlyCompleted);
   };
 
   return {
