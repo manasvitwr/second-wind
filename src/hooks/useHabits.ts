@@ -27,8 +27,7 @@ export function useHabits() {
     }
     
     localStorageService.saveHabits(habits);
-    // Only dispatch if habits actually changed from this hook's perspective
-    // and not as a result of habits-updated event
+    window.dispatchEvent(new CustomEvent('habits-updated'));
   }, [habits, isInitialized]);
 
   const addHabit = (title: string) => {
