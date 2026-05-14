@@ -45,11 +45,47 @@ const TaskTree: React.FC<TaskTreeProps> = ({
     return Math.max(own, childMax);
   };
 
-  const sortedTasks = filteredTasks.sort((a, b) => {
+  const sortedTasks = [...filteredTasks].sort((a, b) => {
+    // 1. Completed tasks always go to the very bottom
     if (a.completed !== b.completed) {
       return a.completed ? 1 : -1;
     }
-    // Most recently created/modified task (or its subtasks) appears first
+
+    // 2. Among active tasks, habits always take priority at the top
+    if (!a.completed && a.isHabit !== b.isHabit) {
+      return a.isHabit ? -1 : 1;
+    }
+
+    // 3. For active habits, apply special subtask-based sorting
+    if (!a.completed && a.isHabit && b.isHabit) {
+      const getMetrics = (t: Task) => {
+        const children = t.children || [];
+        const latestCreated = children.length > 0
+          ? Math.max(...children.map(c => new Date(c.createdAt).getTime()))
+          : new Date(t.createdAt).getTime();
+        
+        const latestCompleted = children.length > 0
+          ? Math.max(0, ...children.map(c => c.completedAt ? new Date(c.completedAt).getTime() : 0))
+          : 0;
+          
+        return { latestCreated, latestCompleted };
+      };
+
+      const metricsA = getMetrics(a);
+      const metricsB = getMetrics(b);
+
+      // Latest subtask added moves habit UP
+      if (metricsA.latestCreated !== metricsB.latestCreated) {
+        return metricsB.latestCreated - metricsA.latestCreated;
+      }
+
+      // Subtask done moves habit DOWN (among other active habits)
+      if (metricsA.latestCompleted !== metricsB.latestCompleted) {
+        return metricsA.latestCompleted - metricsB.latestCompleted;
+      }
+    }
+
+    // 4. Fallback: recently created/modified tasks first
     return getLatestTimestamp(b) - getLatestTimestamp(a);
   });
 
