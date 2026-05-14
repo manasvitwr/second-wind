@@ -211,21 +211,30 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
               className={`task-text text-base md:text-lg font-geist-mono font-normal transition-all duration-300 ease-out cursor-pointer select-none ${task.completed ? 'task-completed opacity-70 scale-98' : 'opacity-100 scale-100'
                 }`}
               onClick={() => {
+                if (isEditing) return;
                 if (task.isHabit) {
-                  onShowHabitModal();
-                } else if (!isEditing) {
+                  // On mobile/PC tapping title now enters edit mode to manage subtasks
+                  toggleEditMode();
+                } else {
                   setIsEditing(true);
                   setIsEditMode(true);
                   setEditTitle(task.title);
                 }
               }}
-              aria-label={task.isHabit ? "View habit details" : "Edit task"}
+              aria-label={task.isHabit ? "Manage habit subtasks" : "Edit task"}
             >
               {task.title}
             </span>
 
             {task.isHabit && (
-              <span className="bg-white/90 text-black text-[11px] px-1.5 py-0.5 rounded font-geist-mono font-medium transition-all duration-300 ease-out">
+              <span 
+                className="bg-white/90 text-black text-[11px] px-1.5 py-0.5 rounded font-geist-mono font-medium transition-all duration-300 ease-out cursor-pointer hover:bg-white active:scale-95"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onShowHabitModal();
+                }}
+                title="View habit details"
+              >
                 Habit
               </span>
             )}
