@@ -97,11 +97,6 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
   };
 
   const toggleEditMode = () => {
-    if (task.isHabit) {
-      onShowHabitModal();
-      return;
-    }
-
     if (isEditing || isEditMode) {
       // Exit full edit mode
       setIsEditing(false);
@@ -112,9 +107,11 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
       cancelAddSubTask();
     } else {
       // Enter full edit mode
-      setIsEditing(true);
+      if (!task.isHabit) {
+        setIsEditing(true);
+        setEditTitle(task.title);
+      }
       setIsEditMode(true);
-      setEditTitle(task.title);
     }
   };
 
@@ -201,13 +198,15 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
               className={`task-text text-base md:text-lg font-geist-mono font-normal transition-all duration-300 ease-out cursor-pointer select-none ${task.completed ? 'task-completed opacity-70 scale-98' : 'opacity-100 scale-100'
                 }`}
               onClick={() => {
-                if (!task.isHabit && !isEditing) {
+                if (task.isHabit) {
+                  onShowHabitModal();
+                } else if (!isEditing) {
                   setIsEditing(true);
                   setIsEditMode(true);
                   setEditTitle(task.title);
                 }
               }}
-              aria-label="Edit task"
+              aria-label={task.isHabit ? "View habit details" : "Edit task"}
             >
               {task.title}
             </span>
@@ -352,7 +351,7 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
             onChange={(e) => setNewSubTaskTitle(e.target.value)}
             placeholder="Enter subtask..."
             className="subtask-input w-full bg-transparent border-b border-neutral-500 rounded-none px-2 py-2 text-white text-base md:text-lg outline-none transition-all duration-300 ease-out focus:border-neutral-300 font-geist-mono"
-            onKeyPress={(e) => e.key === 'Enter' && handleAddSubTask()}
+            onKeyDown={(e) => e.key === 'Enter' && handleAddSubTask()}
             autoFocus
           />
           <div className="flex gap-3 mt-3 transition-all duration-300 ease-out">
