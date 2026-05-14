@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import type { Task } from '../../lib/types';
 import TaskCheckbox from './TaskCheckbox';
 import { Edit, Trash2, Plus, Minus } from 'lucide-react';
@@ -142,10 +142,14 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
   const shouldShowMinitasksIcon = !isEditing && editingSubTaskId === null;
   const shouldShowEditButton = isMobile ? isEditMode : isHovering;
 
-  // FIX #3: Click outside to close subtask modal
+  const branchRef = useRef<HTMLDivElement>(null);
+
+  // FIX #3: Click outside to close subtask modal and exit edit mode
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
+      
+      // Close subtask input if clicking outside
       if (isAddingSubTask &&
         !target.closest('.subtask-modal') &&
         !target.closest('.subtask-input') &&
@@ -153,16 +157,25 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
         setIsAddingSubTask(false);
         setNewSubTaskTitle('');
       }
+
+      // Exit edit mode if clicking outside the entire branch (fixes habit edit stickiness)
+      if (isEditMode && branchRef.current && !branchRef.current.contains(target)) {
+        setIsEditMode(false);
+        setIsEditing(false);
+        setEditingSubTaskId(null);
+        setEditSubTaskTitle('');
+      }
     };
 
-    if (isAddingSubTask) {
+    if (isAddingSubTask || isEditMode) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
-  }, [isAddingSubTask]);
+  }, [isAddingSubTask, isEditMode]);
 
   return (
     <div
+      ref={branchRef}
       className="flex flex-col py-1 px-0 md:px-3 bg-transparent transition-all duration-300 ease-out"
       onMouseEnter={() => !isMobile && setIsHovering(true)}
       onMouseLeave={() => !isMobile && setIsHovering(false)}
