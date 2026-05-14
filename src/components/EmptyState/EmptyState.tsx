@@ -49,14 +49,25 @@ const EmptyState: React.FC<EmptyStateProps> = ({ filter }) => {
 
   const Icon = getIcon();
 
+
+  const getIconSize = () => {
+    switch (filter) {
+      case 'active':
+      case 'completed':
+        return 'w-28 h-28';
+      default:
+        return 'w-20 h-20';
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center py-[200px] text-center">
       {Icon && (
         <div className="mb-3">
-          <img 
-            src={Icon} 
-            alt="" 
-            className="w-20 h-20 opacity-70"
+          <img
+            src={Icon}
+            alt=""
+            className={`${getIconSize()} opacity-70`}
           />
         </div>
       )}
