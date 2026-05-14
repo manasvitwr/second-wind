@@ -82,18 +82,43 @@ export function useTasks() {
     let loadedTasks = directAccess() || serviceAccess() || backupAccess() || [];
     
     localStorageService.regenerateDailyHabitsIfNeeded();
-    const habits = localStorageService.generateDailyHabits();
+    const habitDefinitions = localStorageService.getHabits();
+    const today = localStorageService.getTodayDateString();
+    const yesterday = localStorageService.getYesterdayDateString();
+    
+    const habitTasks: Task[] = habitDefinitions.filter(h => h.isActive).map(habit => {
+      const todayTaskId = `habit-${habit.id}-${today}`;
+      const yesterdayTaskId = `habit-${habit.id}-${yesterday}`;
+      
+      const savedTodayTask = loadedTasks.find(t => t.id === todayTaskId);
+      const savedYesterdayTask = loadedTasks.find(t => t.id === yesterdayTaskId);
+      
+      const task: Task = {
+        id: todayTaskId,
+        title: habit.title,
+        completed: habit.lastCompletedDate === today,
+        isHabit: true,
+        createdAt: savedTodayTask?.createdAt || new Date(),
+        children: []
+      };
+      
+      if (savedTodayTask) {
+        task.children = savedTodayTask.children || [];
+      } else if (savedYesterdayTask && !savedYesterdayTask.completed) {
+        task.children = savedYesterdayTask.children || [];
+      }
+      
+      return task;
+    });
     
     const nonHabitTasks = loadedTasks.filter(task => !task.isHabit);
-    const allTasks = [...nonHabitTasks, ...habits];
-    setTasks(allTasks);
+    setTasks([...nonHabitTasks, ...habitTasks]);
     
     if (loadedTasks.length > 0) {
       localStorage.setItem('secondwind-tasks-backup', JSON.stringify(loadedTasks));
     }
     
     setIsInitialized(true);
-    
   }, []);
 
   useEffect(() => {
@@ -101,8 +126,8 @@ export function useTasks() {
       return;
     }
     
-    const nonHabitTasks = tasks.filter(task => !task.isHabit);
-    localStorageService.saveTasks(nonHabitTasks);
+    // Save all tasks including habits to persist subtasks
+    localStorageService.saveTasks(tasks);
   }, [tasks, isInitialized]);
 
   useEffect(() => {
@@ -113,10 +138,40 @@ export function useTasks() {
 
     const handleHabitsUpdated = () => {
       localStorageService.regenerateDailyHabitsIfNeeded();
-      const newHabits = localStorageService.generateDailyHabits();
+      const habitDefinitions = localStorageService.getHabits();
+      const today = localStorageService.getTodayDateString();
+      const yesterday = localStorageService.getYesterdayDateString();
+      
       setTasks(prev => {
         const nonHabitTasks = prev.filter(task => !task.isHabit);
-        return [...nonHabitTasks, ...newHabits];
+        const currentHabitTasks = prev.filter(task => task.isHabit);
+        
+        const newHabitTasks = habitDefinitions.filter(h => h.isActive).map(habit => {
+          const todayTaskId = `habit-${habit.id}-${today}`;
+          const yesterdayTaskId = `habit-${habit.id}-${yesterday}`;
+          
+          const existingTodayTask = currentHabitTasks.find(t => t.id === todayTaskId);
+          const savedYesterdayTask = currentHabitTasks.find(t => t.id === yesterdayTaskId);
+          
+          const task: Task = {
+            id: todayTaskId,
+            title: habit.title,
+            completed: habit.lastCompletedDate === today,
+            isHabit: true,
+            createdAt: existingTodayTask?.createdAt || new Date(),
+            children: []
+          };
+          
+          if (existingTodayTask) {
+            task.children = existingTodayTask.children || [];
+          } else if (savedYesterdayTask && !savedYesterdayTask.completed) {
+            task.children = savedYesterdayTask.children || [];
+          }
+          
+          return task;
+        });
+        
+        return [...nonHabitTasks, ...newHabitTasks];
       });
     };
 
@@ -156,10 +211,10 @@ export function useTasks() {
       return prev.map(task => {
         if (task.id === taskId) {
           const newCompleted = !task.completed;
-          if (task.isHabit && newCompleted) {
+          if (task.isHabit) {
             const habitId = task.id.split('-')[1];
             if (habitId) {
-              localStorageService.markHabitCompleted(habitId);
+              localStorageService.toggleHabitCompletion(habitId, newCompleted);
             }
           }
           if (!task.isHabit && newCompleted) {
@@ -184,13 +239,27 @@ export function useTasks() {
               : child
           );
           
-          const allChildrenCompleted = updatedChildren.every(child => child.completed);
+          const allChildrenCompleted = updatedChildren.length > 0 && updatedChildren.every(child => child.completed);
+          const wasCompleted = task.completed;
+          const isNowCompleted = allChildrenCompleted;
+          
+          if (task.isHabit && isNowCompleted && !wasCompleted) {
+            const habitId = task.id.split('-')[1];
+            if (habitId) {
+              localStorageService.toggleHabitCompletion(habitId, true);
+            }
+          } else if (task.isHabit && !isNowCompleted && wasCompleted) {
+            const habitId = task.id.split('-')[1];
+            if (habitId) {
+              localStorageService.toggleHabitCompletion(habitId, false);
+            }
+          }
           
           return {
             ...task,
             children: updatedChildren,
-            completed: allChildrenCompleted && updatedChildren.length > 0,
-            completedAt: allChildrenCompleted && updatedChildren.length > 0 ? new Date() : undefined,
+            completed: isNowCompleted,
+            completedAt: isNowCompleted ? new Date() : undefined,
           };
         }
         
