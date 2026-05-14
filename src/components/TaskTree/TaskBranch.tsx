@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import type { Task } from '../../lib/types';
 import TaskCheckbox from './TaskCheckbox';
 import { Edit, Trash2, Plus, Minus } from 'lucide-react';
@@ -97,11 +97,6 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
   };
 
   const toggleEditMode = () => {
-    if (task.isHabit) {
-      onShowHabitModal();
-      return;
-    }
-
     if (isEditing || isEditMode) {
       // Exit full edit mode
       setIsEditing(false);
@@ -112,9 +107,11 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
       cancelAddSubTask();
     } else {
       // Enter full edit mode
-      setIsEditing(true);
+      if (!task.isHabit) {
+        setIsEditing(true);
+        setEditTitle(task.title);
+      }
       setIsEditMode(true);
-      setEditTitle(task.title);
     }
   };
 
@@ -145,10 +142,14 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
   const shouldShowMinitasksIcon = !isEditing && editingSubTaskId === null;
   const shouldShowEditButton = isMobile ? isEditMode : isHovering;
 
-  // FIX #3: Click outside to close subtask modal
+  const branchRef = useRef<HTMLDivElement>(null);
+
+  // FIX #3: Click outside to close subtask modal and exit edit mode
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
+      
+      // Close subtask input if clicking outside
       if (isAddingSubTask &&
         !target.closest('.subtask-modal') &&
         !target.closest('.subtask-input') &&
@@ -156,16 +157,25 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
         setIsAddingSubTask(false);
         setNewSubTaskTitle('');
       }
+
+      // Exit edit mode if clicking outside the entire branch (fixes habit edit stickiness)
+      if (isEditMode && branchRef.current && !branchRef.current.contains(target)) {
+        setIsEditMode(false);
+        setIsEditing(false);
+        setEditingSubTaskId(null);
+        setEditSubTaskTitle('');
+      }
     };
 
-    if (isAddingSubTask) {
+    if (isAddingSubTask || isEditMode) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
-  }, [isAddingSubTask]);
+  }, [isAddingSubTask, isEditMode]);
 
   return (
     <div
+      ref={branchRef}
       className="flex flex-col py-1 px-0 md:px-3 bg-transparent transition-all duration-300 ease-out"
       onMouseEnter={() => !isMobile && setIsHovering(true)}
       onMouseLeave={() => !isMobile && setIsHovering(false)}
@@ -201,13 +211,15 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
               className={`task-text text-base md:text-lg font-geist-mono font-normal transition-all duration-300 ease-out cursor-pointer select-none ${task.completed ? 'task-completed opacity-70 scale-98' : 'opacity-100 scale-100'
                 }`}
               onClick={() => {
-                if (!task.isHabit && !isEditing) {
+                if (task.isHabit) {
+                  onShowHabitModal();
+                } else if (!isEditing) {
                   setIsEditing(true);
                   setIsEditMode(true);
                   setEditTitle(task.title);
                 }
               }}
-              aria-label="Edit task"
+              aria-label={task.isHabit ? "View habit details" : "Edit task"}
             >
               {task.title}
             </span>
@@ -352,7 +364,7 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
             onChange={(e) => setNewSubTaskTitle(e.target.value)}
             placeholder="Enter subtask..."
             className="subtask-input w-full bg-transparent border-b border-neutral-500 rounded-none px-2 py-2 text-white text-base md:text-lg outline-none transition-all duration-300 ease-out focus:border-neutral-300 font-geist-mono"
-            onKeyPress={(e) => e.key === 'Enter' && handleAddSubTask()}
+            onKeyDown={(e) => e.key === 'Enter' && handleAddSubTask()}
             autoFocus
           />
           <div className="flex gap-3 mt-3 transition-all duration-300 ease-out">

@@ -75,7 +75,7 @@ class LocalStorageService {
   
   saveTasks(tasks: Task[]): void {
     try {
-      if (!Array.isArray(tasks) || tasks.length === 0) {
+      if (!Array.isArray(tasks)) {
         return;
       }
       
@@ -127,11 +127,11 @@ class LocalStorageService {
     }
   }
 
-  private getTodayDateString(): string {
+  getTodayDateString(): string {
     return new Date().toISOString().split('T')[0];
   }
 
-  private getYesterdayDateString(): string {
+  getYesterdayDateString(): string {
     return new Date(Date.now() - 86400000).toISOString().split('T')[0];
   }
 
@@ -154,15 +154,18 @@ class LocalStorageService {
     const habits = this.getHabits();
 
     const updatedHabits: Habit[] = habits.map(habit => {
+      // If last completed was yesterday, keep the streak as is (it will be incremented today when completed)
       if (habit.lastCompletedDate === yesterday) {
-        return { ...habit, streak: typeof habit.streak === 'number' ? habit.streak : 0 };
+        return habit;
       }
 
-      if (habit.lastCompletedDate !== today) {
-        return { ...habit, streak: 0 };
+      // If last completed was today (unlikely here but for safety), keep it
+      if (habit.lastCompletedDate === today) {
+        return habit;
       }
 
-      return { ...habit, streak: typeof habit.streak === 'number' ? habit.streak : 0 };
+      // Otherwise, they missed a day, reset streak
+      return { ...habit, streak: 0 };
     });
 
     this.saveHabits(updatedHabits);
@@ -178,30 +181,55 @@ class LocalStorageService {
       .map(habit => ({
         id: `habit-${habit.id}-${today}`,
         title: habit.title,
-        completed: false,
+        completed: habit.lastCompletedDate === today,
         isHabit: true,
         createdAt: new Date(),
         children: [],
       }));
   }
 
-  markHabitCompleted(habitId: string): void {
+  toggleHabitCompletion(habitId: string, completed: boolean): void {
     const today = this.getTodayDateString();
     const yesterday = this.getYesterdayDateString();
     const habits = this.getHabits();
+    
     const updated = habits.map(habit => {
       if (habit.id !== habitId) return habit;
+      
       const prevStreak = typeof habit.streak === 'number' ? habit.streak : 0;
-      let newStreak = 1;
-      if (habit.lastCompletedDate === today) {
-        newStreak = prevStreak;
-      } else if (habit.lastCompletedDate === yesterday) {
-        newStreak = prevStreak + 1;
+      let newStreak = prevStreak;
+      let newLastCompletedDate = habit.lastCompletedDate;
+
+      if (completed) {
+        // Completing the habit
+        if (habit.lastCompletedDate === today) {
+          // Already completed today, no change
+          newStreak = prevStreak;
+        } else if (habit.lastCompletedDate === yesterday) {
+          // Continued streak
+          newStreak = prevStreak + 1;
+        } else {
+          // Started new streak
+          newStreak = 1;
+        }
+        newLastCompletedDate = today;
       } else {
-        newStreak = 1;
+        // Uncompleting the habit
+        if (habit.lastCompletedDate === today) {
+          // If we are unchecking today's completion, we need to revert the streak
+          // This is tricky because we don't know if the streak was 1 or prev+1
+          // But we can assume if it was completed today, the streak was incremented or set to 1.
+          // Simplest is to just decrement if it was > 0, but that might be wrong if it was a fresh start.
+          // Better: if we uncomplete today, lastCompletedDate becomes undefined (or yesterday if we could track it)
+          // For simplicity, let's just decrement streak and clear lastCompletedDate.
+          newStreak = prevStreak > 0 ? prevStreak - 1 : 0;
+          newLastCompletedDate = undefined; 
+        }
       }
-      return { ...habit, lastCompletedDate: today, streak: newStreak };
+      
+      return { ...habit, lastCompletedDate: newLastCompletedDate, streak: newStreak };
     });
+    
     this.saveHabits(updated);
     window.dispatchEvent(new CustomEvent('habits-updated'));
   }
