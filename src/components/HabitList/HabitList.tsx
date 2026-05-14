@@ -16,6 +16,7 @@ const HabitList: React.FC<HabitListProps> = ({
   onAddHabit,
   onEditHabit,
   onDeleteHabit,
+  onToggleHabit,
 }) => {
   const [isAddingHabit, setIsAddingHabit] = useState(false);
   const [newHabitTitle, setNewHabitTitle] = useState('');
@@ -49,8 +50,7 @@ const HabitList: React.FC<HabitListProps> = ({
   };
 
   const getStreak = (habit: Habit): number => {
-    const anyHabit = habit as unknown as { streak?: number };
-    return typeof anyHabit.streak === 'number' ? anyHabit.streak : 0;
+    return typeof habit.streak === 'number' ? habit.streak : 0;
   };
 
   const formatCreationDate = (date: Date): string => {
@@ -99,16 +99,19 @@ const HabitList: React.FC<HabitListProps> = ({
                   type="text"
                   value={editTitle}
                   onChange={e => setEditTitle(e.target.value)}
-                  onKeyPress={e => e.key === 'Enter' && handleEditHabit(habit.id, habit.title)}
+                  onKeyDown={e => e.key === 'Enter' && handleEditHabit(habit.id, habit.title)}
                   onBlur={() => handleEditHabit(habit.id, habit.title)}
                   className="w-full bg-neutral-700 border border-neutral-600 rounded px-2 py-1 text-white text-sm outline-none"
                   autoFocus
                 />
               ) : (
                 <div>
-                  <span className={`task-text text-sm md:text-base ${
-                    isCompletedToday(habit) ? 'task-completed' : ''
-                  }`}>
+                  <span
+                    onClick={() => onToggleHabit(habit.id)}
+                    className={`task-text text-sm md:text-base cursor-pointer select-none ${
+                      isCompletedToday(habit) ? 'task-completed opacity-70' : 'opacity-100'
+                    }`}
+                  >
                     {habit.title}
                   </span>
                   <div className="flex items-center gap-4 mt-1">
@@ -165,7 +168,7 @@ const HabitList: React.FC<HabitListProps> = ({
           onChange={(e) => setNewHabitTitle(e.target.value)}
           placeholder="Enter habit title..."
           className="bg-neutral-800/60 border border-neutral-600/50 rounded-lg px-4 py-3 text-white text-sm md:text-base outline-none mt-4 w-full transition-all duration-300 ease-out backdrop-blur-sm focus:bg-neutral-700/50 focus:border-neutral-400/60 focus:shadow-lg focus:shadow-neutral-500/10 placeholder-neutral-500 font-geist-mono"
-          onKeyPress={(e) => e.key === 'Enter' && handleAddHabit()}
+          onKeyDown={(e) => e.key === 'Enter' && handleAddHabit()}
           autoFocus
         />
         <div className="flex gap-3 mt-3 transition-all duration-300 ease-out">

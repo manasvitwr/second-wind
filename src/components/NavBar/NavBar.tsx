@@ -30,7 +30,7 @@ const NavBar: React.FC<NavBarProps> = ({ currentFilter, onFilterChange, onAddTas
             value={newTask}
             placeholder="What needs to be done?"
             onChange={e => setNewTask(e.target.value)}
-            onKeyPress={handleTaskAdd}
+            onKeyDown={handleTaskAdd}
             className="input-placeholder bg-transparent border-b-2 border-neutral-600 text-neutral-400 font-geist-mono font-normal text-2xl md:text-3xl py-3line w-full tracking-normal transition-all duration-300 focus:text-neutral-200 focus:outline-none focus:border-neutral-500 focus:placeholder-neutral-500"
           />
         </div>
