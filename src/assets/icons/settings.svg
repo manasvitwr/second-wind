@@ -1,0 +1,76 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="1024"
+  height="1024"
+  viewBox="0 0 1024 1024"
+  fill="none"
+>
+  <defs>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow
+        dx="0"
+        dy="0"
+        stdDeviation="1.2"
+        flood-color="#000000"
+        flood-opacity="0.18"
+      />
+    </filter>
+
+    <mask id="gearCut">
+      <rect width="1024" height="1024" fill="black"/>
+      
+      <!-- Outer gear -->
+      <g transform="translate(512 512)">
+        <g fill="white">
+          <!-- Teeth -->
+          <rect x="-48" y="-335" width="96" height="115" rx="4"/>
+          <rect x="-48" y="-335" width="96" height="115" rx="4"
+            transform="rotate(30)"/>
+          <rect x="-48" y="-335" width="96" height="115" rx="4"
+            transform="rotate(60)"/>
+          <rect x="-48" y="-335" width="96" height="115" rx="4"
+            transform="rotate(90)"/>
+          <rect x="-48" y="-335" width="96" height="115" rx="4"
+            transform="rotate(120)"/>
+          <rect x="-48" y="-335" width="96" height="115" rx="4"
+            transform="rotate(150)"/>
+          <rect x="-48" y="-335" width="96" height="115" rx="4"
+            transform="rotate(180)"/>
+          <rect x="-48" y="-335" width="96" height="115" rx="4"
+            transform="rotate(210)"/>
+          <rect x="-48" y="-335" width="96" height="115" rx="4"
+            transform="rotate(240)"/>
+          <rect x="-48" y="-335" width="96" height="115" rx="4"
+            transform="rotate(270)"/>
+          <rect x="-48" y="-335" width="96" height="115" rx="4"
+            transform="rotate(300)"/>
+          <rect x="-48" y="-335" width="96" height="115" rx="4"
+            transform="rotate(330)"/>
+
+          <!-- Gear body -->
+          <circle r="272"/>
+        </g>
+
+        <!-- Inner hollow -->
+        <circle r="190" fill="black"/>
+      </g>
+    </mask>
+  </defs>
+
+  <!-- Transparent background -->
+  <rect width="1024" height="1024" fill="transparent"/>
+
+  <!-- Gear -->
+  <g mask="url(#gearCut)" filter="url(#softShadow)">
+    <rect width="1024" height="1024" fill="#f2f2f2"/>
+  </g>
+
+  <!-- Center circle -->
+  <circle
+    cx="512"
+    cy="512"
+    r="80"
+    fill="#f2f2f2"
+    filter="url(#softShadow)"
+  />
+</svg>
