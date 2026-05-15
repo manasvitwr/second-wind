@@ -15,6 +15,7 @@ export interface Habit {
   isActive: boolean;
   streak?: number; // running streak count
   createdAt: Date; // creation date
+  resetTime?: string; // HH:MM format, defaults to "04:00"
 }
 
 class LocalStorageService {
@@ -109,6 +110,7 @@ class LocalStorageService {
         isActive: h.isActive !== false,
         streak: typeof h.streak === 'number' ? h.streak : 0,
         createdAt: h.createdAt ? new Date(h.createdAt) : new Date(),
+        resetTime: typeof h.resetTime === 'string' ? h.resetTime : '21:00',
       }));
       return habits;
     } catch {

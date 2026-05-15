@@ -27,16 +27,16 @@ export function useHabits() {
     }
     
     localStorageService.saveHabits(habits);
-    window.dispatchEvent(new CustomEvent('habits-updated'));
   }, [habits, isInitialized]);
 
-  const addHabit = (title: string) => {
+  const addHabit = (title: string, resetTime?: string) => {
     const newHabit: Habit = {
       id: Date.now().toString(),
       title,
       isActive: true,
       streak: 0,
       createdAt: new Date(),
+      resetTime: resetTime || '21:00',
     };
     setHabits(prev => [...prev, newHabit]);
     
@@ -53,10 +53,10 @@ export function useHabits() {
     window.dispatchEvent(new CustomEvent('add-habit-task', { detail: habitTask }));
   };
 
-  const editHabit = (id: string, title: string) => {
+  const editHabit = (id: string, title: string, resetTime?: string) => {
     setHabits(prev => 
       prev.map(habit => 
-        habit.id === id ? { ...habit, title } : habit
+        habit.id === id ? { ...habit, title, ...(resetTime !== undefined ? { resetTime } : {}) } : habit
       )
     );
   };

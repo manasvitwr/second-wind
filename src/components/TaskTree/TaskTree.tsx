@@ -12,7 +12,7 @@ interface TaskTreeProps {
   onEditTask: (taskId: string, newTitle: string, parentId?: string) => void;
   onDeleteTask: (taskId: string, parentId?: string) => void;
   onAddTask: (title: string, parentId?: string) => void;
-  onShowHabitModal: () => void;
+
   isMobile: boolean;
 }
 
@@ -23,7 +23,7 @@ const TaskTree: React.FC<TaskTreeProps> = ({
   onEditTask,
   onDeleteTask,
   onAddTask,
-  onShowHabitModal,
+
   isMobile,
 }) => {
   const [showSummary, setShowSummary] = useState(false);
@@ -34,8 +34,7 @@ const TaskTree: React.FC<TaskTreeProps> = ({
         return !task.completed;
       case 'completed':
         return task.completed;
-      case 'habits':
-        return task.isHabit;
+
       default:
         return true;
     }
@@ -138,7 +137,7 @@ const TaskTree: React.FC<TaskTreeProps> = ({
             onEditTask={onEditTask}
             onDeleteTask={onDeleteTask}
             onAddSubTask={onAddTask}
-            onShowHabitModal={onShowHabitModal}
+
             isMobile={isMobile}
             isLastTask={index === sortedTasks.length - 1}
           />
