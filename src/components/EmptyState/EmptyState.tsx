@@ -4,7 +4,7 @@ import ActiveIcon from '../../assets/icons/active.svg';
 import CompletedIcon from '../../assets/icons/completed.svg';
 
 interface EmptyStateProps {
-  filter: 'all' | 'active' | 'completed' | 'habits';
+  filter: 'all' | 'active' | 'completed' | 'analytics';
 }
 
 const EmptyState: React.FC<EmptyStateProps> = ({ filter }) => {
@@ -14,8 +14,8 @@ const EmptyState: React.FC<EmptyStateProps> = ({ filter }) => {
         return 'No active tasks';
       case 'completed':
         return 'No completed tasks';
-      case 'habits':
-        return 'No habits yet';
+      case 'analytics':
+        return 'Analytics coming soon';
       default:
         return 'Create tasks to get started';
     }
@@ -25,8 +25,8 @@ const EmptyState: React.FC<EmptyStateProps> = ({ filter }) => {
     switch (filter) {
       case 'all':
         return 'Add your first task using the input above';
-      case 'habits':
-        return ' + Add New Habit to track daily routines and build streaks';
+      case 'analytics':
+        return null;
       default:
         return null;
     }
@@ -40,7 +40,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({ filter }) => {
         return ActiveIcon;
       case 'completed':
         return CompletedIcon;
-      case 'habits':
+      case 'analytics':
         return null;
       default:
         return null;
