@@ -59,10 +59,12 @@ export function useHabits() {
         habit.id === id ? { ...habit, title, ...(resetTime !== undefined ? { resetTime } : {}) } : habit
       )
     );
+    setTimeout(() => window.dispatchEvent(new CustomEvent('habits-updated')), 0);
   };
 
   const deleteHabit = (id: string) => {
     setHabits(prev => prev.filter(habit => habit.id !== id));
+    setTimeout(() => window.dispatchEvent(new CustomEvent('habits-updated')), 0);
   };
 
   const toggleHabit = (id: string) => {
