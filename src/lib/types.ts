@@ -15,6 +15,7 @@ export interface Habit {
   isActive: boolean;
   streak?: number;
   createdAt: Date;
+  resetTime?: string;
 }
 
 export interface Subtask {
@@ -26,7 +27,7 @@ export interface Subtask {
   completedAt?: Date;
 }
 
-export type FilterType = 'all' | 'active' | 'completed' | 'habits';
+export type FilterType = 'all' | 'active' | 'completed' | 'analytics';
 
 export interface TaskTreeState {
   tasks: Task[];

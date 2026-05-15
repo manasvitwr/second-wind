@@ -11,7 +11,7 @@ export interface Task {
 
 export interface TaskTreeState {
   tasks: Task[];
-  filter: 'all' | 'active' | 'completed' | 'habits';
+  filter: 'all' | 'active' | 'completed' | 'analytics';
 }
 
 // Task interface is exported above
