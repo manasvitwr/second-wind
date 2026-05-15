@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { Task, FilterType } from '../../lib/types';
 import TaskBranch from './TaskBranch';
 import EmptyState from '../EmptyState/EmptyState';
+import TaskSummary from './TaskSummary';
 
 
 interface TaskTreeProps {
@@ -25,6 +26,8 @@ const TaskTree: React.FC<TaskTreeProps> = ({
   onShowHabitModal,
   isMobile,
 }) => {
+  const [showSummary, setShowSummary] = useState(false);
+
   const filteredTasks = tasks.filter(task => {
     switch (filter) {
       case 'active':
@@ -100,14 +103,30 @@ const TaskTree: React.FC<TaskTreeProps> = ({
           <span className="underline decoration-white underline-offset-[6px] pb-0">
             Tasks
           </span>
-          <svg
-            className="w-8 h-8 text-neutral-400"
-            viewBox="0 0 24 24"
-            fill="currentColor"
+          <button
+            className="summary-trigger p-0 bg-transparent border-none cursor-pointer transition-all duration-200 ease-out"
+            onClick={() => setShowSummary(prev => !prev)}
+            aria-label={showSummary ? 'Hide task summary' : 'Show task summary'}
+            title="Task summary"
           >
-            <path d="M7 10l5 5 5-5z" />
-          </svg>
+            <svg
+              className={`w-8 h-8 transition-all duration-200 ease-out ${
+                showSummary ? 'text-white' : 'text-neutral-400 hover:text-neutral-200'
+              }`}
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M7 10l5 5 5-5z" />
+            </svg>
+          </button>
         </h2>
+
+        {showSummary && (
+          <TaskSummary
+            tasks={tasks}
+            onClose={() => setShowSummary(false)}
+          />
+        )}
       </div>
 
       <div className="flex flex-col">
