@@ -257,11 +257,11 @@ const Settings: React.FC<SettingsProps> = ({
             <div className="font-geist-mono text-[11px] text-neutral-700 -my-3">
               ---------------
             </div>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap gap-2">
               <span className="font-geist-mono text-sm text-neutral-400 mt-3">
-                {streakFreezeCount} freeze available this month
+                {streakFreezeCount} freeze avail.
               </span>
-              <button className="font-geist-mono text-sm bg-transparent border border-neutral-700 px-2.5 py-0.5 text-neutral-300 cursor-pointer transition-all duration-200 hover:border-neutral-500 hover:text-white">
+              <button className="font-geist-mono text-sm bg-transparent border border-neutral-700 px-2.5 py-0.5 text-neutral-300 cursor-pointer transition-all duration-200 hover:border-neutral-500 hover:text-white mt-3">
                 [ USE ]
               </button>
             </div>
