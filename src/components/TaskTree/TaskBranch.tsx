@@ -241,6 +241,7 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
         )}
 
         {/* FIX #3: Reduced icon opacity to 0.6, hover to 1.0 */}
+        {!task.isHabit && (
         <div className="flex gap-2 opacity-60 hover:opacity-100 transition-all duration-300 ease-out min-w-[60px] shrink-0 justify-end">
           {shouldShowEditButton && (
             <button
@@ -277,6 +278,7 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
             <Trash2 size={16} />
           </button>
         </div>
+        )}
       </div>
 
       {isExpanded && task.children && task.children.length > 0 && (
