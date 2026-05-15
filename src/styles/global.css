@@ -11,7 +11,7 @@
   html,
   body,
   #root {
-    @apply h-screen w-screen overflow-x-auto;
+    @apply min-h-screen w-full overflow-x-hidden;
     font-family: 'Geist', sans-serif;
     @apply bg-gradient-to-b from-neutral-800 to-black text-white;
   }
@@ -48,6 +48,10 @@
 
   .task-completed {
     @apply line-through text-neutral-500;
+  }
+
+  .settings-title-text {
+    @apply font-geist-mono font-bold bg-gradient-to-b from-white from-0% via-white/70 via-50% to-white/20 to-100% bg-clip-text text-transparent;
   }
 }
 
