@@ -13,7 +13,7 @@ interface TaskBranchProps {
   onEditTask: (taskId: string, newTitle: string, parentId?: string) => void;
   onDeleteTask: (taskId: string, parentId?: string) => void;
   onAddSubTask: (title: string, parentId: string) => void;
-  onShowHabitModal: () => void;
+
   isMobile: boolean;
   isLastTask?: boolean;
 }
@@ -24,7 +24,7 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
   onEditTask,
   onDeleteTask,
   onAddSubTask,
-  onShowHabitModal,
+
   isMobile,
   isLastTask,
 }) => {
@@ -45,12 +45,7 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
   };
 
   const handleEdit = () => {
-    if (task.isHabit) {
-      onShowHabitModal();
-      setIsEditing(false);
-      setIsEditMode(false);
-      return;
-    }
+
 
     const trimmedTitle = editTitle.trim();
     if (trimmedTitle) {
@@ -228,12 +223,8 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
 
             {task.isHabit && (
               <span 
-                className="bg-white/90 text-black text-[11px] px-1.5 py-0.5 rounded font-geist-mono font-medium transition-all duration-300 ease-out cursor-pointer hover:bg-white active:scale-95"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onShowHabitModal();
-                }}
-                title="View habit details"
+                className="bg-white/90 text-black text-[11px] px-1.5 py-0.5 rounded font-geist-mono font-medium transition-all duration-300 ease-out"
+                title="Habit task"
               >
                 Habit
               </span>
@@ -278,10 +269,6 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
           <button
             className="p-1 text-red-400 hover:text-red-400 transition-all duration-250 ease-out transform hover:scale-110"
             onClick={() => {
-              if (task.isHabit) {
-                onShowHabitModal();
-                return;
-              }
               try { mainDeleteAudio.currentTime = 0; mainDeleteAudio.play(); } catch { }
               onDeleteTask(task.id);
             }}
