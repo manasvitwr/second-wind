@@ -10,14 +10,35 @@ const TaskSummary: React.FC<TaskSummaryProps> = ({ tasks, onClose }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (ref.current && !ref.current.contains(target) && !target.closest('.summary-trigger')) {
+    const handleActivity = (e: Event) => {
+      // Close immediately on scroll/wheel
+      if (e.type === 'scroll' || e.type === 'wheel' || e.type === 'touchmove') {
         onClose();
+        return;
+      }
+      
+      // For clicks/taps, check if outside
+      const target = e.target as HTMLElement;
+      if (e.type === 'mousedown' || e.type === 'touchstart') {
+        if (ref.current && !ref.current.contains(target) && !target.closest('.summary-trigger')) {
+          onClose();
+        }
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+
+    document.addEventListener('mousedown', handleActivity);
+    document.addEventListener('touchstart', handleActivity, { passive: true });
+    window.addEventListener('scroll', handleActivity, { passive: true });
+    window.addEventListener('wheel', handleActivity, { passive: true });
+    window.addEventListener('touchmove', handleActivity, { passive: true });
+
+    return () => {
+      document.removeEventListener('mousedown', handleActivity);
+      document.removeEventListener('touchstart', handleActivity);
+      window.removeEventListener('scroll', handleActivity);
+      window.removeEventListener('wheel', handleActivity);
+      window.removeEventListener('touchmove', handleActivity);
+    };
   }, [onClose]);
 
   const standaloneTasks = tasks.filter(t => !t.children || t.children.length === 0);
