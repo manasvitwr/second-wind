@@ -11,13 +11,13 @@
   html,
   body,
   #root {
-    @apply min-h-screen w-full overflow-x-hidden;
+    @apply min-h-screen w-full;
     font-family: 'Geist', sans-serif;
-    @apply bg-gradient-to-b from-neutral-800 to-black text-white;
+    @apply bg-black text-white;
   }
 
   body {
-    @apply overscroll-none m-0 p-0;
+    @apply overscroll-none m-0 p-0 overflow-x-hidden;
   }
 }
 

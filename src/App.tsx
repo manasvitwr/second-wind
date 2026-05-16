@@ -71,7 +71,7 @@ const App: React.FC = () => {
 
   return (
     <div className=
-      "min-h-screen w-full flex flex-col bg-gradient-to-b from-black to-black p-4 md:p-8 gap-4 md:gap-9 overflow-x-hidden">
+      "min-h-screen w-full flex flex-col bg-black p-4 md:p-8 gap-4 md:gap-9">
 
       <div className="flex-1 flex flex-col max-w-6xl mx-auto w-full">
         {/* Title area with morph transition */}
@@ -125,6 +125,8 @@ const App: React.FC = () => {
               pointerEvents: isSettingsMode ? 'none' : 'auto',
               position: isSettingsMode ? 'absolute' : 'relative',
               width: '100%',
+              maxHeight: isSettingsMode ? '100%' : 'none',
+              overflow: isSettingsMode ? 'hidden' : 'visible',
             }}
           >
             {filter === 'analytics' ? (
@@ -152,6 +154,8 @@ const App: React.FC = () => {
               position: isSettingsMode ? 'relative' : 'absolute',
               top: isSettingsMode ? undefined : 0,
               width: '100%',
+              maxHeight: isSettingsMode ? 'none' : '100%',
+              overflow: isSettingsMode ? 'visible' : 'hidden',
             }}
           >
             <Settings
