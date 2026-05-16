@@ -214,7 +214,17 @@ const Settings: React.FC<SettingsProps> = ({
 
   const getStreak = (habit: Habit) => typeof habit.streak === 'number' ? habit.streak : 0;
 
-  const streakFreezeCount = 1;
+  const [streakFreezeCount, setStreakFreezeCount] = useState(() => {
+    const stored = localStorage.getItem('secondwind-streak-freeze-count');
+    return stored ? parseInt(stored, 10) : 1;
+  });
+  const [isEditingFreeze, setIsEditingFreeze] = useState(false);
+
+  const handleFreezeCountChange = (val: number) => {
+    const clamped = Math.max(1, Math.min(10, val));
+    setStreakFreezeCount(clamped);
+    localStorage.setItem('secondwind-streak-freeze-count', String(clamped));
+  };
 
   const cycleResetTime = (habit: Habit) => {
     const rt = habit.resetTime || '04:00';
@@ -257,11 +267,33 @@ const Settings: React.FC<SettingsProps> = ({
             <div className="font-geist-mono text-[11px] text-neutral-700 -my-3">
               ---------------
             </div>
-            <div className="flex items-center justify-between flex-wrap gap-2">
-              <span className="font-geist-mono text-sm text-neutral-400 mt-3">
-                {streakFreezeCount} freeze avail.
-              </span>
-              <button className="font-geist-mono text-sm bg-transparent border border-neutral-700 px-2.5 py-0.5 text-neutral-300 cursor-pointer transition-all duration-200 hover:border-neutral-500 hover:text-white mt-3">
+            <div className="flex items-center justify-between flex-wrap gap-2 mt-3">
+              <div className="flex items-center gap-2">
+                {isEditingFreeze ? (
+                  <input
+                    type="number"
+                    min={1}
+                    max={10}
+                    value={streakFreezeCount}
+                    onChange={e => handleFreezeCountChange(parseInt(e.target.value, 10) || 1)}
+                    onBlur={() => setIsEditingFreeze(false)}
+                    onKeyDown={e => e.key === 'Enter' && setIsEditingFreeze(false)}
+                    className="font-geist-mono text-sm text-white bg-transparent border-b border-neutral-600 outline-none w-10 text-center py-0.5"
+                    autoFocus
+                  />
+                ) : (
+                  <span className="font-geist-mono text-sm text-neutral-400">
+                    {streakFreezeCount}/mo available
+                  </span>
+                )}
+                <button
+                  className="font-geist-mono text-xs text-neutral-600 bg-transparent border-none cursor-pointer underline hover:text-neutral-300 transition-colors duration-200"
+                  onClick={() => setIsEditingFreeze(prev => !prev)}
+                >
+                  edit
+                </button>
+              </div>
+              <button className="font-geist-mono text-sm bg-transparent border border-neutral-700 px-2.5 py-0.5 text-neutral-300 cursor-pointer transition-all duration-200 hover:border-neutral-500 hover:text-white">
                 [ USE ]
               </button>
             </div>
