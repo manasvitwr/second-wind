@@ -26,10 +26,12 @@ const App: React.FC = () => {
     message: string;
     deletedTask: Task | null;
     parentId?: string;
+    timestamp: number;
   }>({
     isVisible: false,
     message: '',
     deletedTask: null,
+    timestamp: 0,
   });
 
   const handleDeleteTask = (taskId: string, parentId?: string) => {
@@ -52,7 +54,8 @@ const App: React.FC = () => {
         isVisible: true,
         message: parentId ? "Subtask deleted" : "Task deleted",
         deletedTask: taskToDelete,
-        parentId
+        parentId,
+        timestamp: Date.now()
       });
       deleteTask(taskId, parentId);
     }
@@ -176,6 +179,8 @@ const App: React.FC = () => {
       <Toast
         message={toastState.message}
         isVisible={toastState.isVisible}
+        timestamp={toastState.timestamp}
+        duration={toastState.parentId ? 2450 : 3500}
         onUndo={handleUndo}
         onClose={() => setToastState(prev => ({ ...prev, isVisible: false }))}
       />

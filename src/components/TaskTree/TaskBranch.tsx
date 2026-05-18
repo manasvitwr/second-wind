@@ -201,9 +201,9 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
             aria-pressed={isEditing}
           />
         ) : (
-          <div className="flex-1 flex items-center gap-4">
+          <div className="flex-1 flex items-center gap-4 min-w-0">
             <span
-              className={`task-text text-base md:text-lg font-geist-mono font-normal transition-all duration-300 ease-out cursor-pointer select-none ${task.completed ? 'task-completed opacity-70 scale-98' : 'opacity-100 scale-100'
+              className={`task-text text-base md:text-lg font-geist-mono font-normal transition-all duration-300 ease-out cursor-pointer select-none line-clamp-2 break-words whitespace-normal min-w-0 ${task.completed ? 'task-completed opacity-70 scale-98' : 'opacity-100 scale-100'
                 }`}
               onClick={() => {
                 if (isEditing) return;
@@ -286,7 +286,7 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
           {/* Vertical Connector Line - Only if not last task group and not editing */}
           {!isLastTask && !isEditing && !isEditMode && (
             <div
-              className="absolute left-[-1.75rem] w-[3px] bg-white rounded-full z-0"
+              className="absolute left-[-1.75rem] w-[3px] bg-white/50 rounded-full z-0"
               style={{
                 top: '-0.25rem',   // Starts from bottom of parent checkbox
                 bottom: '-0.5rem'  // Ends at top of next parent checkbox
@@ -325,7 +325,7 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
                 />
               ) : (
                 <span
-                  className={`flex-1 task-text text-sm md:text-base font-geist-mono font-normal transition-all duration-300 ease-out whitespace-normal break-words ${child.completed ? 'task-completed opacity-60 scale-98' : 'text-neutral-300 opacity-90 scale-100'
+                  className={`flex-1 min-w-0 task-text text-sm md:text-base font-geist-mono font-normal transition-all duration-300 ease-out whitespace-normal break-words line-clamp-2 ${child.completed ? 'task-completed opacity-60 scale-98' : 'text-neutral-300 opacity-90 scale-100'
                     }`}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -338,7 +338,7 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
 
               {isEditMode && editingSubTaskId !== child.id && (
                 <button
-                  className="p-1 text-red-400 hover:text-red-300 transition-all duration-250 ease-out transform hover:translate-x-1 overflow-hidden"
+                  className="p-1 text-red-400 hover:text-red-300 transition-all duration-250 ease-out transform hover:translate-x-1 overflow-hidden shrink-0 relative z-20"
                   onClick={(e) => {
                     e.stopPropagation();
                     try { subDeleteAudio.currentTime = 0; subDeleteAudio.play(); } catch { }
