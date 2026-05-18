@@ -4,18 +4,24 @@ import UndoIcon from './UndoIcon';
 interface ToastProps {
     message: string;
     isVisible: boolean;
+    timestamp?: number;
     onUndo: () => void;
     onClose: () => void;
 }
 
-const Toast: React.FC<ToastProps> = ({ message, isVisible, onUndo, onClose }) => {
+const Toast: React.FC<ToastProps> = ({ message, isVisible, timestamp, onUndo, onClose }) => {
     const [shouldRender, setShouldRender] = useState(false);
     const [progress, setProgress] = useState(100);
+    const [bounce, setBounce] = useState(false);
 
     useEffect(() => {
         if (isVisible) {
             setShouldRender(true);
             setProgress(100);
+            
+            // Trigger slight bounce animation
+            setBounce(true);
+            const bounceTimer = setTimeout(() => setBounce(false), 150);
             
             // Short delay to allow browser to paint initial state before transitioning
             const animationTimer = setTimeout(() => {
@@ -24,9 +30,10 @@ const Toast: React.FC<ToastProps> = ({ message, isVisible, onUndo, onClose }) =>
 
             const timer = setTimeout(() => {
                 onClose();
-            }, 5000);
+            }, 3500);
             
             return () => {
+                clearTimeout(bounceTimer);
                 clearTimeout(animationTimer);
                 clearTimeout(timer);
             };
@@ -36,7 +43,7 @@ const Toast: React.FC<ToastProps> = ({ message, isVisible, onUndo, onClose }) =>
             }, 300); // Wait for fade out animation
             return () => clearTimeout(timer);
         }
-    }, [isVisible, onClose]);
+    }, [isVisible, timestamp, onClose]);
 
     if (!shouldRender) return null;
 
@@ -48,7 +55,7 @@ const Toast: React.FC<ToastProps> = ({ message, isVisible, onUndo, onClose }) =>
             className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 
         bg-neutral-950 border border-neutral-800 rounded-2xl p-4
         shadow-[0_8px_32px_rgba(0,0,0,0.6)] transition-all duration-300 ease-out
-        ${isVisible ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-4 opacity-0 scale-95'}
+        ${isVisible ? (bounce ? 'translate-y-0 opacity-100 scale-[1.03]' : 'translate-y-0 opacity-100 scale-100') : 'translate-y-4 opacity-0 scale-95'}
         w-[320px] flex flex-col gap-4`}
         >
             <div className="flex items-center justify-between">
@@ -63,7 +70,7 @@ const Toast: React.FC<ToastProps> = ({ message, isVisible, onUndo, onClose }) =>
                         aria-label="Undo"
                     >
                         <UndoIcon className="w-[18px] h-[18px] transition-transform group-hover:-translate-x-0.5" />
-                        <div className="absolute top-[4px] right-[4px] w-[5px] h-[5px] bg-red-500 rounded-full" />
+                        <div className="absolute -top-[3px] -right-[3px] w-[6px] h-[6px] bg-red-500 rounded-full border border-neutral-950" />
                     </button>
                 </div>
             </div>
@@ -81,7 +88,7 @@ const Toast: React.FC<ToastProps> = ({ message, isVisible, onUndo, onClose }) =>
                     className="absolute inset-0 flex justify-between px-1"
                     style={{ 
                         clipPath: `inset(0 ${100 - progress}% 0 0)`,
-                        transition: isVisible && progress === 0 ? 'clip-path 4900ms linear' : 'none'
+                        transition: isVisible && progress === 0 ? 'clip-path 3400ms linear' : 'none'
                     }}
                 >
                     {ticks.map((_, i) => (
