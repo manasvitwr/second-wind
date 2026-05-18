@@ -286,7 +286,7 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
           {/* Vertical Connector Line - Only if not last task group and not editing */}
           {!isLastTask && !isEditing && !isEditMode && (
             <div
-              className="absolute left-[-1.75rem] w-[3px] bg-white rounded-full z-0"
+              className="absolute left-[-1.75rem] w-[3px] bg-white/50 rounded-full z-0"
               style={{
                 top: '-0.25rem',   // Starts from bottom of parent checkbox
                 bottom: '-0.5rem'  // Ends at top of next parent checkbox
