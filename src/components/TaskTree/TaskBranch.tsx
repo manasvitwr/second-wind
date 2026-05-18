@@ -338,7 +338,7 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
 
               {isEditMode && editingSubTaskId !== child.id && (
                 <button
-                  className="p-1 text-red-400 hover:text-red-300 transition-all duration-250 ease-out transform hover:translate-x-1 overflow-hidden"
+                  className="p-1 text-red-400 hover:text-red-300 transition-all duration-250 ease-out transform hover:translate-x-1 overflow-hidden shrink-0 relative z-20"
                   onClick={(e) => {
                     e.stopPropagation();
                     try { subDeleteAudio.currentTime = 0; subDeleteAudio.play(); } catch { }
