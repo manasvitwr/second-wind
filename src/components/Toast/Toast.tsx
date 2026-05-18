@@ -5,11 +5,12 @@ interface ToastProps {
     message: string;
     isVisible: boolean;
     timestamp?: number;
+    duration?: number;
     onUndo: () => void;
     onClose: () => void;
 }
 
-const Toast: React.FC<ToastProps> = ({ message, isVisible, timestamp, onUndo, onClose }) => {
+const Toast: React.FC<ToastProps> = ({ message, isVisible, timestamp, duration = 3500, onUndo, onClose }) => {
     const [shouldRender, setShouldRender] = useState(false);
     const [progress, setProgress] = useState(100);
     const [bounce, setBounce] = useState(false);
@@ -30,7 +31,7 @@ const Toast: React.FC<ToastProps> = ({ message, isVisible, timestamp, onUndo, on
 
             const timer = setTimeout(() => {
                 onClose();
-            }, 3500);
+            }, duration);
             
             return () => {
                 clearTimeout(bounceTimer);
@@ -88,7 +89,7 @@ const Toast: React.FC<ToastProps> = ({ message, isVisible, timestamp, onUndo, on
                     className="absolute inset-0 flex justify-between px-1"
                     style={{ 
                         clipPath: `inset(0 ${100 - progress}% 0 0)`,
-                        transition: isVisible && progress === 0 ? 'clip-path 3400ms linear' : 'none'
+                        transition: isVisible && progress === 0 ? `clip-path ${duration - 100}ms linear` : 'none'
                     }}
                 >
                     {ticks.map((_, i) => (

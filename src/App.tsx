@@ -180,6 +180,7 @@ const App: React.FC = () => {
         message={toastState.message}
         isVisible={toastState.isVisible}
         timestamp={toastState.timestamp}
+        duration={toastState.parentId ? 2450 : 3500}
         onUndo={handleUndo}
         onClose={() => setToastState(prev => ({ ...prev, isVisible: false }))}
       />
