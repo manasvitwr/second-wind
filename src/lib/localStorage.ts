@@ -1,3 +1,5 @@
+import type { ActivityRecord } from './types';
+
 export interface Task {
   id: string;
   title: string;
@@ -6,6 +8,7 @@ export interface Task {
   isHabit?: boolean;
   createdAt: Date;
   completedAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface Habit {
@@ -22,6 +25,7 @@ class LocalStorageService {
   private readonly TASKS_KEY = 'secondwind-tasks';
   private readonly HABITS_KEY = 'secondwind-habits';
   private readonly HABITS_LAST_GEN_KEY = 'secondwind-habits-last-generation-date';
+  private readonly ACTIVITY_LOG_KEY = 'secondwind-activity-log';
 
   getTasks(): Task[] {
     try {
@@ -50,6 +54,7 @@ class LocalStorageService {
           isHabit: Boolean(item.isHabit),
           createdAt: item.createdAt ? new Date(item.createdAt) : new Date(),
           completedAt: item.completedAt ? new Date(item.completedAt) : undefined,
+          updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined,
           children: []
         };
         
@@ -84,6 +89,7 @@ class LocalStorageService {
         ...t,
         createdAt: t.createdAt.toISOString(),
         completedAt: t.completedAt?.toISOString(),
+        updatedAt: t.updatedAt?.toISOString(),
         children: t.children ? t.children.map(child => ({
           ...child,
           createdAt: child.createdAt.toISOString(),
@@ -234,6 +240,60 @@ class LocalStorageService {
     
     this.saveHabits(updated);
     window.dispatchEvent(new CustomEvent('habits-updated'));
+  }
+  getActivityLog(): ActivityRecord[] {
+    try {
+      const raw = localStorage.getItem(this.ACTIVITY_LOG_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private appendActivityRecords(records: ActivityRecord[]): void {
+    if (records.length === 0) return;
+    try {
+      const existing = this.getActivityLog();
+      localStorage.setItem(this.ACTIVITY_LOG_KEY, JSON.stringify([...existing, ...records]));
+    } catch {
+    }
+  }
+
+  /**
+   * Auto-expires completed tasks that are 2+ months old.
+   * Before removal, writes an anonymous ActivityRecord for each expired task
+   * so analytics data is preserved. Manual deletes do NOT call this.
+   * Returns the surviving task list (call saveTasks after).
+   */
+  expireOldCompletedTasks(tasks: Task[]): Task[] {
+    const now = new Date();
+    const twoMonthsMs = 1000 * 60 * 60 * 24 * 61; // ~2 months
+    const expired: ActivityRecord[] = [];
+    const loggedAt = now.toISOString();
+
+    const surviving = tasks.filter(task => {
+      if (!task.completed || !task.completedAt) return true;
+      const age = now.getTime() - task.completedAt.getTime();
+      if (age < twoMonthsMs) return true;
+
+      // Log anonymous activity record before dropping the task
+      expired.push({
+        createdAt: task.createdAt.toISOString(),
+        completedAt: task.completedAt.toISOString(),
+        updatedAt: task.updatedAt?.toISOString(),
+        subtaskCount: task.children?.length ?? 0,
+        subtaskCompletedCount: task.children?.filter(c => c.completed).length ?? 0,
+        isHabit: Boolean(task.isHabit),
+        loggedAt,
+      });
+
+      return false;
+    });
+
+    this.appendActivityRecords(expired);
+    return surviving;
   }
 }
 
