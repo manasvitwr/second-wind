@@ -113,7 +113,8 @@ export function useTasks() {
       return task;
     });
     
-    const nonHabitTasks = loadedTasks.filter(task => !task.isHabit);
+    const rawNonHabitTasks = loadedTasks.filter(task => !task.isHabit);
+    const nonHabitTasks = localStorageService.expireOldCompletedTasks(rawNonHabitTasks);
     setTasks([...nonHabitTasks, ...habitTasks]);
     
     if (loadedTasks.length > 0) {
