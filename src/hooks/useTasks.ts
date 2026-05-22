@@ -25,6 +25,7 @@ export function useTasks() {
               isHabit: Boolean(item.isHabit),
               createdAt: item.createdAt ? new Date(item.createdAt) : new Date(),
               completedAt: item.completedAt ? new Date(item.completedAt) : undefined,
+              updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined,
               children: Array.isArray(item.children) ? item.children.map((child: any) => ({
                 id: String(child.id),
                 title: String(child.title),
@@ -63,6 +64,7 @@ export function useTasks() {
               isHabit: Boolean(item.isHabit),
               createdAt: item.createdAt ? new Date(item.createdAt) : new Date(),
               completedAt: item.completedAt ? new Date(item.completedAt) : undefined,
+              updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined,
               children: Array.isArray(item.children) ? item.children.map((child: any) => ({
                 id: String(child.id),
                 title: String(child.title),
@@ -185,11 +187,12 @@ export function useTasks() {
   }, []);
 
   const addTask = (title: string, parentId?: string) => {
+    const now = new Date();
     const newTask: Task = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       title,
       completed: false,
-      createdAt: new Date(),
+      createdAt: now,
       children: [],
     };
 
@@ -200,7 +203,7 @@ export function useTasks() {
       
       return prev.map(task => 
         task.id === parentId 
-          ? { ...task, children: [...(task.children || []), newTask] }
+          ? { ...task, children: [...(task.children || []), newTask], updatedAt: now }
           : task
       );
     });
@@ -229,12 +232,13 @@ export function useTasks() {
         }
         
         if (task.children && parentId === task.id) {
+          const now = new Date();
           const updatedChildren = task.children.map(child =>
             child.id === taskId
               ? {
                   ...child,
                   completed: !child.completed,
-                  completedAt: !child.completed ? new Date() : undefined,
+                  completedAt: !child.completed ? now : undefined,
                 }
               : child
           );
@@ -257,9 +261,10 @@ export function useTasks() {
           
           return {
             ...task,
+            updatedAt: now,
             children: updatedChildren,
             completed: isNowCompleted,
-            completedAt: isNowCompleted ? new Date() : undefined,
+            completedAt: isNowCompleted ? now : undefined,
           };
         }
         
@@ -269,15 +274,17 @@ export function useTasks() {
   };
 
   const editTask = (taskId: string, newTitle: string, parentId?: string) => {
+    const now = new Date();
     setTasks(prev => {
       return prev.map(task => {
         if (task.id === taskId) {
-          return { ...task, title: newTitle };
+          return { ...task, title: newTitle, updatedAt: now };
         }
         
         if (task.children && parentId === task.id) {
           return {
             ...task,
+            updatedAt: now,
             children: task.children.map(child =>
               child.id === taskId ? { ...child, title: newTitle } : child
             ),
@@ -290,6 +297,7 @@ export function useTasks() {
   };
 
   const deleteTask = (taskId: string, parentId?: string) => {
+    const now = new Date();
     setTasks(prev => {
       if (!parentId) {
         return prev.filter(task => task.id !== taskId);
@@ -297,7 +305,7 @@ export function useTasks() {
       
       return prev.map(task =>
         task.id === parentId
-          ? { ...task, children: (task.children || []).filter(child => child.id !== taskId) }
+          ? { ...task, updatedAt: now, children: (task.children || []).filter(child => child.id !== taskId) }
           : task
       );
     });
