@@ -3,6 +3,9 @@ import type { Task, FilterType } from '../../lib/types';
 import TaskBranch from './TaskBranch';
 import EmptyState from '../EmptyState/EmptyState';
 import TaskSummary from './TaskSummary';
+import { getActiveAgeBucket } from '../../utils/timeUtils';
+import type { ActiveAgeBucket } from '../../utils/timeUtils';
+import { ChevronDown } from 'lucide-react';
 
 
 interface TaskTreeProps {
@@ -16,6 +19,14 @@ interface TaskTreeProps {
   isMobile: boolean;
 }
 
+const BUCKET_LABELS: Record<ActiveAgeBucket, string> = {
+  today: 'TODAY',
+  earlier: 'EARLIER',
+  old: 'OLD',
+};
+
+const BUCKET_ORDER: ActiveAgeBucket[] = ['today', 'earlier', 'old'];
+
 const TaskTree: React.FC<TaskTreeProps> = ({
   tasks,
   filter,
@@ -27,6 +38,11 @@ const TaskTree: React.FC<TaskTreeProps> = ({
   isMobile,
 }) => {
   const [showSummary, setShowSummary] = useState(false);
+  const [collapsedBuckets, setCollapsedBuckets] = useState<Record<string, boolean>>({});
+
+  const toggleBucket = (bucket: string) => {
+    setCollapsedBuckets(prev => ({ ...prev, [bucket]: !prev[bucket] }));
+  };
 
   const filteredTasks = tasks.filter(task => {
     switch (filter) {
@@ -95,6 +111,84 @@ const TaskTree: React.FC<TaskTreeProps> = ({
     return <EmptyState filter={filter} />;
   }
 
+  // ── Active page: bucket-grouped rendering ──────────────────────────────────
+  if (filter === 'active') {
+    const activeCount = sortedTasks.reduce((acc, t) => {
+      const parentCount = t.completed ? 0 : 1;
+      const childCount = (t.children || []).filter(c => !c.completed).length;
+      return acc + parentCount + childCount;
+    }, 0);
+
+    const buckets: Record<ActiveAgeBucket, Task[]> = { today: [], earlier: [], old: [] };
+    for (const task of sortedTasks) {
+      const bucket = getActiveAgeBucket(task);
+      buckets[bucket].push(task);
+    }
+
+    return (
+      <div className="flex-1 px-4 md:px-8 flex flex-col">
+        {/* Subheader: task count + EKG */}
+        <div className="flex items-center justify-between mb-4 px-0 md:px-3">
+          <span className="text-neutral-500 text-sm font-geist-mono flex items-center gap-1.5">
+            <span className="inline-block w-2 h-2 rounded-full bg-neutral-500 shrink-0" />
+            {activeCount} tasks remaining
+          </span>
+          <span className="text-neutral-600 text-sm font-geist-mono tracking-widest select-none">.._/\_/\...</span>
+        </div>
+
+        {/* Bucket sections */}
+        {BUCKET_ORDER.map(bucket => {
+          const bucketTasks = buckets[bucket];
+          if (bucketTasks.length === 0) return null;
+          const isCollapsed = collapsedBuckets[bucket] ?? false;
+
+          return (
+            <div key={bucket} className="mb-2">
+              {/* Bucket header */}
+              <button
+                className="w-full flex items-center gap-3 py-2 px-0 md:px-3 bg-transparent border-none cursor-pointer group"
+                onClick={() => toggleBucket(bucket)}
+                aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} ${BUCKET_LABELS[bucket]}`}
+              >
+                <span className="text-neutral-500 text-xs font-geist-mono font-bold tracking-wider shrink-0">
+                  {BUCKET_LABELS[bucket]}
+                </span>
+                <div className="flex-1 h-[1px] bg-neutral-800" />
+                <span className="bg-neutral-800 px-2 py-0.5 text-xs rounded text-neutral-400 font-geist-mono shrink-0">
+                  {bucketTasks.length}
+                </span>
+                <ChevronDown
+                  size={16}
+                  className={`text-neutral-500 transition-transform duration-300 ease-out shrink-0 ${isCollapsed ? '-rotate-90' : 'rotate-0'}`}
+                />
+              </button>
+
+              {/* Bucket tasks */}
+              {!isCollapsed && (
+                <div className="flex flex-col">
+                  {bucketTasks.map((task, index) => (
+                    <TaskBranch
+                      key={task.id}
+                      task={task}
+                      onToggleTask={onToggleTask}
+                      onEditTask={onEditTask}
+                      onDeleteTask={onDeleteTask}
+                      onAddSubTask={onAddTask}
+                      isMobile={isMobile}
+                      isLastTask={index === bucketTasks.length - 1}
+                      isActivePage
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // ── Default rendering (View All / Completed) ──────────────────────────────
   return (
     <div className="flex-1 px-4 md:px-8 flex flex-col">
       <div className="relative mb-0 -ml-2">
