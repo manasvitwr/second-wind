@@ -81,11 +81,11 @@ const TaskTree: React.FC<TaskTreeProps> = ({
         const latestCreated = children.length > 0
           ? Math.max(...children.map(c => new Date(c.createdAt).getTime()))
           : new Date(t.createdAt).getTime();
-        
+
         const latestCompleted = children.length > 0
           ? Math.max(0, ...children.map(c => c.completedAt ? new Date(c.completedAt).getTime() : 0))
           : 0;
-          
+
         return { latestCreated, latestCompleted };
       };
 
@@ -124,7 +124,7 @@ const TaskTree: React.FC<TaskTreeProps> = ({
     return (
       <div className="flex-1 px-4 md:px-8 flex flex-col">
         {/* Subheader: task count */}
-        <div className="flex items-center justify-between mb-4 px-0 md:px-3">
+        <div className="flex items-center justify-between -mb-1 px-0 md:px-3">
           <span className="text-neutral-500 text-sm font-geist-mono flex items-center gap-1.5">
             <span className="inline-block w-2 h-2 rounded-full bg-neutral-500 shrink-0" />
             {activeCount} tasks remaining
@@ -198,9 +198,8 @@ const TaskTree: React.FC<TaskTreeProps> = ({
             title="Task summary"
           >
             <svg
-              className={`w-8 h-8 transition-all duration-200 ease-out ${
-                showSummary ? 'text-white' : 'text-neutral-400 hover:text-neutral-200'
-              }`}
+              className={`w-8 h-8 transition-all duration-200 ease-out ${showSummary ? 'text-white' : 'text-neutral-400 hover:text-neutral-200'
+                }`}
               viewBox="0 0 24 24"
               fill="currentColor"
             >
