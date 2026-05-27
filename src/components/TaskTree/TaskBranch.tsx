@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { Task } from '../../lib/types';
 import TaskCheckbox from './TaskCheckbox';
-import { Edit, Trash2, Plus, Minus } from 'lucide-react';
+import { Edit, Trash2, Plus, Minus, MoreVertical } from 'lucide-react';
 import deleteMainSound from '../../assets/sounds/delete-main.mp3';
 import deleteSubtaskSound from '../../assets/sounds/delete-subtask.mp3';
 import MinitasksIcon from '../../assets/icons/minitasks.svg';
 import DropdownArrow from './DropdownArrow';
+import { getActiveTaskSubtext } from '../../utils/timeUtils';
 
 interface TaskBranchProps {
   task: Task;
@@ -16,6 +17,7 @@ interface TaskBranchProps {
 
   isMobile: boolean;
   isLastTask?: boolean;
+  isActivePage?: boolean;
 }
 
 const TaskBranch: React.FC<TaskBranchProps> = ({
@@ -27,6 +29,7 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
 
   isMobile,
   isLastTask,
+  isActivePage,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
@@ -37,6 +40,8 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
   const [editSubTaskTitle, setEditSubTaskTitle] = useState('');
   const [isHovering, setIsHovering] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
+  const [showOptionsMenu, setShowOptionsMenu] = useState(false);
+  const optionsMenuRef = useRef<HTMLDivElement>(null);
   const mainDeleteAudio = React.useMemo(() => new Audio(deleteMainSound), []);
   const subDeleteAudio = React.useMemo(() => new Audio(deleteSubtaskSound), []);
 
@@ -160,13 +165,18 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
         setEditingSubTaskId(null);
         setEditSubTaskTitle('');
       }
+
+      // Close active-page options menu if clicking outside
+      if (showOptionsMenu && optionsMenuRef.current && !optionsMenuRef.current.contains(target)) {
+        setShowOptionsMenu(false);
+      }
     };
 
-    if (isAddingSubTask || isEditMode) {
+    if (isAddingSubTask || isEditMode || showOptionsMenu) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
-  }, [isAddingSubTask, isEditMode]);
+  }, [isAddingSubTask, isEditMode, showOptionsMenu]);
 
   return (
     <div
@@ -202,24 +212,30 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
           />
         ) : (
           <div className="flex-1 flex items-center gap-4 min-w-0">
-            <span
-              className={`task-text text-base md:text-lg font-geist-mono font-normal transition-all duration-300 ease-out cursor-pointer select-none line-clamp-2 break-words whitespace-normal min-w-0 ${task.completed ? 'task-completed opacity-70 scale-98' : 'opacity-100 scale-100'
-                }`}
-              onClick={() => {
-                if (isEditing) return;
-                if (task.isHabit) {
-                  // On mobile/PC tapping title now enters edit mode to manage subtasks
-                  toggleEditMode();
-                } else {
-                  setIsEditing(true);
-                  setIsEditMode(true);
-                  setEditTitle(task.title);
-                }
-              }}
-              aria-label={task.isHabit ? "Manage habit subtasks" : "Edit task"}
-            >
-              {task.title}
-            </span>
+            <div className="flex flex-col min-w-0 flex-1">
+              <span
+                className={`task-text text-base md:text-lg font-geist-mono font-normal transition-all duration-300 ease-out cursor-pointer select-none line-clamp-2 break-words whitespace-normal min-w-0 ${task.completed ? 'task-completed opacity-70 scale-98' : 'opacity-100 scale-100'
+                  }`}
+                onClick={() => {
+                  if (isEditing) return;
+                  if (task.isHabit) {
+                    toggleEditMode();
+                  } else {
+                    setIsEditing(true);
+                    setIsEditMode(true);
+                    setEditTitle(task.title);
+                  }
+                }}
+                aria-label={task.isHabit ? "Manage habit subtasks" : "Edit task"}
+              >
+                {task.title}
+              </span>
+              {isActivePage && (
+                <span className="text-neutral-500 text-xs font-geist-mono mt-0.5">
+                  {getActiveTaskSubtext(task)}
+                </span>
+              )}
+            </div>
 
             {task.isHabit && (
               <span 
@@ -240,8 +256,63 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
           </div>
         )}
 
-        {/* FIX #3: Reduced icon opacity to 0.6, hover to 1.0 */}
-        {!task.isHabit && (
+        {/* Active page: three-dot options menu */}
+        {isActivePage && !task.isHabit && (
+          <div className="relative shrink-0" ref={optionsMenuRef}>
+            <button
+              className="p-1.5 text-neutral-500 hover:text-white transition-all duration-250 ease-out"
+              onClick={() => setShowOptionsMenu(prev => !prev)}
+              aria-label="Task options"
+              title="Options"
+            >
+              <MoreVertical size={18} />
+            </button>
+            {showOptionsMenu && (
+              <div className="absolute right-0 top-full mt-1 bg-neutral-950 border border-neutral-800 rounded-lg shadow-xl py-1 z-30 font-geist-mono min-w-[160px]">
+                <button
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors duration-150 bg-transparent border-none cursor-pointer text-left"
+                  onClick={() => {
+                    setShowOptionsMenu(false);
+                    if (task.isHabit) {
+                      toggleEditMode();
+                    } else {
+                      setIsEditing(true);
+                      setIsEditMode(true);
+                      setEditTitle(task.title);
+                    }
+                  }}
+                >
+                  <Edit size={14} />
+                  Edit
+                </button>
+                <button
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors duration-150 bg-transparent border-none cursor-pointer text-left"
+                  onClick={() => {
+                    setShowOptionsMenu(false);
+                    setIsAddingSubTask(true);
+                  }}
+                >
+                  <Plus size={14} />
+                  Add subtask
+                </button>
+                <button
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-neutral-800 hover:text-red-300 transition-colors duration-150 bg-transparent border-none cursor-pointer text-left"
+                  onClick={() => {
+                    setShowOptionsMenu(false);
+                    try { mainDeleteAudio.currentTime = 0; mainDeleteAudio.play(); } catch { }
+                    onDeleteTask(task.id);
+                  }}
+                >
+                  <Trash2 size={14} />
+                  Delete
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Default pages: inline action buttons */}
+        {!isActivePage && !task.isHabit && (
         <div className="flex gap-2 opacity-60 hover:opacity-100 transition-all duration-300 ease-out min-w-[60px] shrink-0 justify-end">
           {shouldShowEditButton && (
             <button
