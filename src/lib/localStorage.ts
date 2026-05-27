@@ -286,7 +286,7 @@ class LocalStorageService {
         completedAt: task.completedAt.toISOString(),
         updatedAt: task.updatedAt?.toISOString(),
         subtaskCount: task.children?.length ?? 0,
-        subtaskCompletedCount: task.children?.filter(c => c.completed).length ?? 0,
+        subtaskCompletedCount: task.children?.filter(c => c.completed)?.length ?? 0,
         isHabit: Boolean(task.isHabit),
         loggedAt,
       });
