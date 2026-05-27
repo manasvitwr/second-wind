@@ -113,11 +113,7 @@ const TaskTree: React.FC<TaskTreeProps> = ({
 
   // ── Active page: bucket-grouped rendering ──────────────────────────────────
   if (filter === 'active') {
-    const activeCount = sortedTasks.reduce((acc, t) => {
-      const parentCount = t.completed ? 0 : 1;
-      const childCount = (t.children || []).filter(c => !c.completed).length;
-      return acc + parentCount + childCount;
-    }, 0);
+    const activeCount = sortedTasks.length;
 
     const buckets: Record<ActiveAgeBucket, Task[]> = { today: [], earlier: [], old: [] };
     for (const task of sortedTasks) {
@@ -127,13 +123,12 @@ const TaskTree: React.FC<TaskTreeProps> = ({
 
     return (
       <div className="flex-1 px-4 md:px-8 flex flex-col">
-        {/* Subheader: task count + EKG */}
+        {/* Subheader: task count */}
         <div className="flex items-center justify-between mb-4 px-0 md:px-3">
           <span className="text-neutral-500 text-sm font-geist-mono flex items-center gap-1.5">
             <span className="inline-block w-2 h-2 rounded-full bg-neutral-500 shrink-0" />
             {activeCount} tasks remaining
           </span>
-          <span className="text-neutral-600 text-sm font-geist-mono tracking-widest select-none">.._/\_/\...</span>
         </div>
 
         {/* Bucket sections */}
