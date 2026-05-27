@@ -80,7 +80,7 @@ const App: React.FC = () => {
         {/* Title area with morph transition */}
         <div className="px-2 mb-3 mt-4 flex items-center justify-between">
           <h1
-            className={`${filter === 'active' && !isSettingsMode ? 'section-title' : 'app-title'} text-2xl md:text-4xl transition-all duration-500 ease-out`}
+            className="app-title text-2xl md:text-4xl transition-all duration-500 ease-out"
             style={{
               opacity: 1,
               transform: isSettingsMode ? 'translateY(0px)' : 'translateY(0px)',
@@ -88,18 +88,16 @@ const App: React.FC = () => {
           >
             {isSettingsMode ? (
               '/ SETTINGS'
-            ) : filter === 'active' ? (
-              'What needs attention?'
             ) : (
               '/ SECONDWIND'
             )}
           </h1>
-          {(isSettingsMode || filter === 'active') && (
+          {isSettingsMode && (
             <button
               className="bg-transparent border-none cursor-pointer p-1 transition-all duration-300"
               onClick={toggleSettings}
-              aria-label={isSettingsMode ? 'Close settings' : 'Open settings'}
-              title={isSettingsMode ? 'Back to tasks' : 'Settings'}
+              aria-label="Close settings"
+              title="Back to tasks"
             >
               <img
                 src={settingsIcon}
