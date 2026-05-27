@@ -206,40 +206,41 @@ const TaskBranch: React.FC<TaskBranchProps> = ({
         ) : (
           <div className="flex-1 flex items-center gap-4 min-w-0">
             <div className="flex flex-col min-w-0 flex-1">
-              <span
-                className={`task-text text-base md:text-lg font-geist-mono font-normal transition-all duration-300 ease-out select-none line-clamp-2 break-words whitespace-normal min-w-0 ${
-                  isActivePage ? 'cursor-default' : 'cursor-pointer'
-                } ${task.completed ? 'task-completed opacity-70 scale-98' : 'opacity-100 scale-100'}`}
-                onClick={() => {
-                  if (isActivePage) return;
-                  if (isEditing) return;
-                  if (task.isHabit) {
-                    toggleEditMode();
-                  } else {
-                    setIsEditing(true);
-                    setIsEditMode(true);
-                    setEditTitle(task.title);
-                  }
-                }}
-                aria-label={task.isHabit ? "Manage habit subtasks" : "Edit task"}
-              >
-                {task.title}
-              </span>
+              <div className="flex items-center gap-2 flex-wrap min-w-0">
+                <span
+                  className={`task-text text-base md:text-lg font-geist-mono font-normal transition-all duration-300 ease-out select-none line-clamp-2 break-words whitespace-normal min-w-0 ${
+                    isActivePage ? 'cursor-default' : 'cursor-pointer'
+                  } ${task.completed ? 'task-completed opacity-70 scale-98' : 'opacity-100 scale-100'}`}
+                  onClick={() => {
+                    if (isActivePage) return;
+                    if (isEditing) return;
+                    if (task.isHabit) {
+                      toggleEditMode();
+                    } else {
+                      setIsEditing(true);
+                      setIsEditMode(true);
+                      setEditTitle(task.title);
+                    }
+                  }}
+                  aria-label={task.isHabit ? "Manage habit subtasks" : "Edit task"}
+                >
+                  {task.title}
+                </span>
+                {task.isHabit && (
+                  <span 
+                    className="bg-neutral-900/60 text-neutral-500/80 border border-neutral-800/40 text-[10px] px-1.5 py-0.2 rounded font-geist-mono font-normal tracking-wide shrink-0 inline-flex items-center align-middle"
+                    title="Habit task"
+                  >
+                    habit
+                  </span>
+                )}
+              </div>
               {isActivePage && (
                 <span className="text-neutral-500 text-xs font-geist-mono mt-0.5">
                   {getActiveTaskSubtext(task)}
                 </span>
               )}
             </div>
-
-            {task.isHabit && (
-              <span 
-                className="bg-white/90 text-black text-[11px] px-1.5 py-0.5 rounded font-geist-mono font-medium transition-all duration-300 ease-out"
-                title="Habit task"
-              >
-                Habit
-              </span>
-            )}
 
             {!isActivePage && task.children && task.children.length > 0 && (
               <DropdownArrow
