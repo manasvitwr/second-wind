@@ -22,62 +22,46 @@ function hoursDiff(a: Date, b: Date): number {
 }
 
 const MONTH_NAMES = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  'jan', 'feb', 'mar', 'april', 'may', 'june',
+  'july', 'aug', 'sept', 'oct', 'nov', 'dec',
 ];
 
 // ─── active-page subtext ─────────────────────────────────────────────────────
 
 /**
  * Returns the subtext label shown below a task on the Active page.
- *
- * Rules:
- *  - "added today"         — createdAt is today (regardless of touch)
- *  - "touched Xm ago"      — last touch within the past 60 min (and was touched, i.e. updatedAt > createdAt)
- *  - "touched Xh ago"      — last touch within the past 24 h
- *  - "touched yesterday"   — last touch was yesterday
- *  - "touched Xd ago"      — last touch 2–13 days ago
- *  - "sitting since <Mon>" — last touch (or creation) 14+ days ago
- *  - "untouched for Xd"    — never touched since creation (updatedAt absent or == createdAt), sitting >0 days
  */
 export function getActiveTaskSubtext(task: Task, now: Date = new Date()): string {
   const created = task.createdAt instanceof Date ? task.createdAt : new Date(task.createdAt);
-  const createdDaysAgo = daysDiff(created, now);
-
-  // "added today" — created today, we don't care about touch
-  if (createdDaysAgo === 0) {
-    return 'added today';
-  }
 
   const hasBeenTouched =
     task.updatedAt != null &&
-    task.updatedAt instanceof Date &&
-    task.updatedAt.getTime() > created.getTime();
+    new Date(task.updatedAt).getTime() > created.getTime() + 1000;
 
-  const touchRef = hasBeenTouched ? (task.updatedAt as Date) : created;
-  const touchDaysAgo = daysDiff(touchRef, now);
+  const refDate = hasBeenTouched ? new Date(task.updatedAt!) : created;
+  const diffDays = daysDiff(refDate, now);
+  const prefix = hasBeenTouched ? 'touched ' : 'added ';
 
-  // "untouched for Xd" — never touched since creation, sitting >0 days
-  if (!hasBeenTouched) {
-    return `untouched for ${createdDaysAgo}d`;
+  if (diffDays >= 14) {
+    const monthLabel = MONTH_NAMES[refDate.getMonth()];
+    return hasBeenTouched ? `touched in ${monthLabel}` : `sitting since ${monthLabel}`;
   }
 
-  // "sitting since <MonthName>" — last touch 14+ days ago
-  if (touchDaysAgo >= 14) {
-    const monthLabel = MONTH_NAMES[touchRef.getMonth()];
-    return `sitting since ${monthLabel}`;
+  if (diffDays >= 1) {
+    return `${prefix}${diffDays}d ago`;
   }
 
-  // "touched yesterday"
-  if (touchDaysAgo === 1) {
-    return 'touched yesterday';
+  const hrs = hoursDiff(refDate, now);
+  if (hrs >= 1) {
+    return `${prefix}${hrs}h ago`;
   }
 
-  // "touched Xd ago" — 2–13 days
-  if (touchDaysAgo >= 2) {
-    return `touched ${touchDaysAgo}d ago`;
+  const mins = minutesDiff(refDate, now);
+  if (mins >= 1) {
+    return `${prefix}${mins}m ago`;
   }
 
+<<<<<<< HEAD
   // within today — use minute/hour precision
   const mins = minutesDiff(touchRef, now);
   if (mins < 1) {
@@ -92,6 +76,9 @@ export function getActiveTaskSubtext(task: Task, now: Date = new Date()): string
     return `touched just now`;
   }
   return `touched ${hrs}h ago`;
+=======
+  return `${prefix}just now`;
+>>>>>>> 7537204 (upd: format task subtext w/ added/touched prefixes)
 }
 
 // ─── age bucket classifier (for Active page grouping) ────────────────────────
