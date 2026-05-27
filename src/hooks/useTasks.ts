@@ -71,6 +71,7 @@ export function useTasks() {
                 completed: Boolean(child.completed),
                 createdAt: child.createdAt ? new Date(child.createdAt) : new Date(),
                 completedAt: child.completedAt ? new Date(child.completedAt) : undefined,
+                updatedAt: child.updatedAt ? new Date(child.updatedAt) : undefined,
                 children: []
               })) : []
             }));
@@ -240,6 +241,7 @@ export function useTasks() {
                   ...child,
                   completed: !child.completed,
                   completedAt: !child.completed ? now : undefined,
+                  updatedAt: now,
                 }
               : child
           );
