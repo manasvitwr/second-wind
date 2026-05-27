@@ -80,11 +80,17 @@ export function getActiveTaskSubtext(task: Task, now: Date = new Date()): string
 
   // within today — use minute/hour precision
   const mins = minutesDiff(touchRef, now);
+  if (mins < 1) {
+    return `touched just now`;
+  }
   if (mins < 60) {
     return `touched ${mins}m ago`;
   }
 
   const hrs = hoursDiff(touchRef, now);
+  if (hrs < 1) {
+    return `touched just now`;
+  }
   return `touched ${hrs}h ago`;
 }
 
@@ -136,10 +142,10 @@ export function getCompletedTaskSubtext(task: Task, now: Date = new Date()): str
     ? task.completedAt
     : new Date(task.completedAt);
 
-  const mins = minutesDiff(completed, now);
+  const mins = Math.max(0, minutesDiff(completed, now));
   if (mins < 60) return `${mins}m ago`;
 
-  const hrs = hoursDiff(completed, now);
+  const hrs = Math.max(0, hoursDiff(completed, now));
   if (hrs < 24) return `${hrs}h ago`;
 
   const daysAgo = daysDiff(completed, now);
