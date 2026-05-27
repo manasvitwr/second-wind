@@ -65,6 +65,7 @@ class LocalStorageService {
             completed: Boolean(child.completed),
             createdAt: child.createdAt ? new Date(child.createdAt) : new Date(),
             completedAt: child.completedAt ? new Date(child.completedAt) : undefined,
+            updatedAt: child.updatedAt ? new Date(child.updatedAt) : undefined,
             children: []
           }));
         }
@@ -94,6 +95,7 @@ class LocalStorageService {
           ...child,
           createdAt: child.createdAt.toISOString(),
           completedAt: child.completedAt?.toISOString(),
+          updatedAt: child.updatedAt?.toISOString(),
         })) : []
       }));
       
