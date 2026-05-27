@@ -32,6 +32,7 @@ export function useTasks() {
                 completed: Boolean(child.completed),
                 createdAt: child.createdAt ? new Date(child.createdAt) : new Date(),
                 completedAt: child.completedAt ? new Date(child.completedAt) : undefined,
+                updatedAt: child.updatedAt ? new Date(child.updatedAt) : undefined,
                 children: []
               })) : []
             }));
@@ -216,6 +217,7 @@ export function useTasks() {
       return prev.map(task => {
         if (task.id === taskId) {
           const newCompleted = !task.completed;
+          const now = new Date();
           if (task.isHabit) {
             const habitId = task.id.split('-')[1];
             if (habitId) {
@@ -229,7 +231,8 @@ export function useTasks() {
           return {
             ...task,
             completed: newCompleted,
-            completedAt: newCompleted ? new Date() : undefined,
+            completedAt: newCompleted ? now : undefined,
+            updatedAt: now,
           };
         }
         
@@ -289,7 +292,7 @@ export function useTasks() {
             ...task,
             updatedAt: now,
             children: task.children.map(child =>
-              child.id === taskId ? { ...child, title: newTitle } : child
+              child.id === taskId ? { ...child, title: newTitle, updatedAt: now } : child
             ),
           };
         }
