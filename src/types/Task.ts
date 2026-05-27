@@ -7,6 +7,7 @@ export interface Task {
   repeatInterval?: number; // for habits (hours)
   createdAt: Date;
   completedAt?: Date;
+  updatedAt?: Date; // last "touch": any edit to task or its subtasks
 }
 
 export interface TaskTreeState {

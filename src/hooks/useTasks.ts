@@ -25,12 +25,14 @@ export function useTasks() {
               isHabit: Boolean(item.isHabit),
               createdAt: item.createdAt ? new Date(item.createdAt) : new Date(),
               completedAt: item.completedAt ? new Date(item.completedAt) : undefined,
+              updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined,
               children: Array.isArray(item.children) ? item.children.map((child: any) => ({
                 id: String(child.id),
                 title: String(child.title),
                 completed: Boolean(child.completed),
                 createdAt: child.createdAt ? new Date(child.createdAt) : new Date(),
                 completedAt: child.completedAt ? new Date(child.completedAt) : undefined,
+                updatedAt: child.updatedAt ? new Date(child.updatedAt) : undefined,
                 children: []
               })) : []
             }));
@@ -63,12 +65,14 @@ export function useTasks() {
               isHabit: Boolean(item.isHabit),
               createdAt: item.createdAt ? new Date(item.createdAt) : new Date(),
               completedAt: item.completedAt ? new Date(item.completedAt) : undefined,
+              updatedAt: item.updatedAt ? new Date(item.updatedAt) : undefined,
               children: Array.isArray(item.children) ? item.children.map((child: any) => ({
                 id: String(child.id),
                 title: String(child.title),
                 completed: Boolean(child.completed),
                 createdAt: child.createdAt ? new Date(child.createdAt) : new Date(),
                 completedAt: child.completedAt ? new Date(child.completedAt) : undefined,
+                updatedAt: child.updatedAt ? new Date(child.updatedAt) : undefined,
                 children: []
               })) : []
             }));
@@ -111,7 +115,8 @@ export function useTasks() {
       return task;
     });
     
-    const nonHabitTasks = loadedTasks.filter(task => !task.isHabit);
+    const rawNonHabitTasks = loadedTasks.filter(task => !task.isHabit);
+    const nonHabitTasks = localStorageService.expireOldCompletedTasks(rawNonHabitTasks);
     setTasks([...nonHabitTasks, ...habitTasks]);
     
     if (loadedTasks.length > 0) {
@@ -185,11 +190,12 @@ export function useTasks() {
   }, []);
 
   const addTask = (title: string, parentId?: string) => {
+    const now = new Date();
     const newTask: Task = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       title,
       completed: false,
-      createdAt: new Date(),
+      createdAt: now,
       children: [],
     };
 
@@ -200,7 +206,7 @@ export function useTasks() {
       
       return prev.map(task => 
         task.id === parentId 
-          ? { ...task, children: [...(task.children || []), newTask] }
+          ? { ...task, children: [...(task.children || []), newTask], updatedAt: now }
           : task
       );
     });
@@ -211,6 +217,7 @@ export function useTasks() {
       return prev.map(task => {
         if (task.id === taskId) {
           const newCompleted = !task.completed;
+          const now = new Date();
           if (task.isHabit) {
             const habitId = task.id.split('-')[1];
             if (habitId) {
@@ -224,17 +231,20 @@ export function useTasks() {
           return {
             ...task,
             completed: newCompleted,
-            completedAt: newCompleted ? new Date() : undefined,
+            completedAt: newCompleted ? now : undefined,
+            updatedAt: now,
           };
         }
         
         if (task.children && parentId === task.id) {
+          const now = new Date();
           const updatedChildren = task.children.map(child =>
             child.id === taskId
               ? {
                   ...child,
                   completed: !child.completed,
-                  completedAt: !child.completed ? new Date() : undefined,
+                  completedAt: !child.completed ? now : undefined,
+                  updatedAt: now,
                 }
               : child
           );
@@ -257,9 +267,10 @@ export function useTasks() {
           
           return {
             ...task,
+            updatedAt: now,
             children: updatedChildren,
             completed: isNowCompleted,
-            completedAt: isNowCompleted ? new Date() : undefined,
+            completedAt: isNowCompleted ? now : undefined,
           };
         }
         
@@ -269,17 +280,19 @@ export function useTasks() {
   };
 
   const editTask = (taskId: string, newTitle: string, parentId?: string) => {
+    const now = new Date();
     setTasks(prev => {
       return prev.map(task => {
         if (task.id === taskId) {
-          return { ...task, title: newTitle };
+          return { ...task, title: newTitle, updatedAt: now };
         }
         
         if (task.children && parentId === task.id) {
           return {
             ...task,
+            updatedAt: now,
             children: task.children.map(child =>
-              child.id === taskId ? { ...child, title: newTitle } : child
+              child.id === taskId ? { ...child, title: newTitle, updatedAt: now } : child
             ),
           };
         }
@@ -290,6 +303,7 @@ export function useTasks() {
   };
 
   const deleteTask = (taskId: string, parentId?: string) => {
+    const now = new Date();
     setTasks(prev => {
       if (!parentId) {
         return prev.filter(task => task.id !== taskId);
@@ -297,7 +311,7 @@ export function useTasks() {
       
       return prev.map(task =>
         task.id === parentId
-          ? { ...task, children: (task.children || []).filter(child => child.id !== taskId) }
+          ? { ...task, updatedAt: now, children: (task.children || []).filter(child => child.id !== taskId) }
           : task
       );
     });
