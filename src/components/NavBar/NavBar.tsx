@@ -26,7 +26,7 @@ const NavBar: React.FC<NavBarProps> = ({ currentFilter, onFilterChange, onAddTas
   return (
     <nav className="flex flex-col px-2 gap-0.1 -mb-3">
       { }
-      {currentFilter !== 'analytics' && !isSettingsMode && (
+      {currentFilter !== 'analytics' && currentFilter !== 'active' && !isSettingsMode && (
         <div className="relative w-full -mb-2.2 flex items-center">
           <input
             type="text"
