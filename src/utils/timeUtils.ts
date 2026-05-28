@@ -60,25 +60,7 @@ export function getActiveTaskSubtext(task: Task, now: Date = new Date()): string
   if (mins >= 1) {
     return `${prefix}${mins}m ago`;
   }
-
-<<<<<<< HEAD
-  // within today — use minute/hour precision
-  const mins = minutesDiff(touchRef, now);
-  if (mins < 1) {
-    return `touched just now`;
-  }
-  if (mins < 60) {
-    return `touched ${mins}m ago`;
-  }
-
-  const hrs = hoursDiff(touchRef, now);
-  if (hrs < 1) {
-    return `touched just now`;
-  }
-  return `touched ${hrs}h ago`;
-=======
   return `${prefix}just now`;
->>>>>>> 7537204 (upd: format task subtext w/ added/touched prefixes)
 }
 
 // ─── age bucket classifier (for Active page grouping) ────────────────────────
