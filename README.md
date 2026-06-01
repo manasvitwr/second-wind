@@ -69,3 +69,5 @@ Or visit the live app at [second-wind-tracker.vercel.app](https://second-wind-tr
 - Establish habit streaks by consistently completing daily recurring tasks
 - Use streak freezes strategically to maintain long-term consistency without breaking chains
 - Utilize the dark theme for extended work sessions without eye strain
+
+**made w ❤ by manasvi**
