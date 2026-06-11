@@ -123,6 +123,7 @@ const Settings: React.FC<SettingsProps> = ({
   const computeCountdown = useCallback(() => {
     if (habits.length === 0) {
       setCountdown('no habits configured');
+      setCountdownHabit('');
       return;
     }
     const now = new Date();
@@ -245,20 +246,22 @@ const Settings: React.FC<SettingsProps> = ({
         <div className="border-t border-neutral-800/50 ml-6" />
 
         <Section title="Habits" defaultOpen={true}>
-          <div className="mb-3">
-            <span className="font-geist-mono text-[11px] text-neutral-600 tracking-widest uppercase">
-              NEXT RESET
-            </span>
-            <div className="font-geist-mono text-[11px] text-neutral-700 -my-3">
-              ------------
+          {habits.length > 0 && (
+            <div className="mb-3">
+              <span className="font-geist-mono text-[11px] text-neutral-600 tracking-widest uppercase">
+                NEXT RESET
+              </span>
+              <div className="font-geist-mono text-[11px] text-neutral-700 -my-3">
+                ------------
+              </div>
+              <div className="font-geist-mono text-sm text-neutral-400 mt-2">
+                {countdown}
+                {countdownHabit && (
+                  <span className="font-geist-mono text-[11px] text-neutral-600 ml-1">({countdownHabit})</span>
+                )}
+              </div>
             </div>
-            <div className="font-geist-mono text-sm text-neutral-400 mt-2">
-              {countdown}
-              {countdownHabit && (
-                <span className="font-geist-mono text-[11px] text-neutral-600 ml-1">({countdownHabit})</span>
-              )}
-            </div>
-          </div>
+          )}
 
           <div className="mb-4">
             <span className="font-geist-mono text-[11px] text-neutral-600 tracking-widest uppercase">

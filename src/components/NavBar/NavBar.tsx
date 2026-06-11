@@ -25,17 +25,24 @@ const NavBar: React.FC<NavBarProps> = ({ currentFilter, onFilterChange, onAddTas
 
   return (
     <nav className="flex flex-col px-2 gap-0.1 -mb-3">
-      { }
       {currentFilter !== 'analytics' && !isSettingsMode && (
         <div className="relative w-full -mb-2.2 flex items-center">
-          <input
-            type="text"
-            value={newTask}
-            placeholder="What needs to be done?"
-            onChange={e => setNewTask(e.target.value)}
-            onKeyDown={handleTaskAdd}
-            className="input-placeholder bg-transparent border-b-2 border-neutral-600 text-neutral-400 font-geist-mono font-normal text-2xl md:text-3xl py-3line w-full tracking-normal transition-all duration-300 focus:text-neutral-200 focus:outline-none focus:border-neutral-500 focus:placeholder-neutral-500 pr-7 md:pr-8 truncate"
-          />
+          {currentFilter === 'active' ? (
+            <div
+              className="input-placeholder bg-transparent border-b-2 border-neutral-600 text-neutral-400 font-geist-mono font-normal text-2xl md:text-3xl py-0 w-full tracking-normal select-none truncate cursor-default"
+            >
+              What needs attention?
+            </div>
+          ) : (
+            <input
+              type="text"
+              value={newTask}
+              placeholder="What needs to be done?"
+              onChange={e => setNewTask(e.target.value)}
+              onKeyDown={handleTaskAdd}
+              className="input-placeholder bg-transparent border-b-2 border-neutral-600 text-neutral-400 font-geist-mono font-normal text-2xl md:text-3xl py-0 w-full tracking-normal transition-all duration-300 focus:text-neutral-200 focus:outline-none focus:border-neutral-500 focus:placeholder-neutral-500 pr-7 md:pr-8 truncate"
+            />
+          )}
           <button
             className="flex-shrink-0 bg-transparent border-none cursor-pointer p-1 ml-2 transition-all duration-300 hover:opacity-80 absolute right-0 top-1/2 -translate-y-1/2"
             onClick={onToggleSettings}
